@@ -1,0 +1,29 @@
+.auth-box {
+  max-width: 350px;
+  margin: 60px auto;
+  padding: 20px;
+  border-radius: 10px;
+  background: #f4f4f4;
+  text-align: center;
+}
+
+.auth-box input {
+  width: 100%;
+  padding: 10px;
+  margin: 8px 0;
+}
+
+.auth-box button {
+  width: 100%;
+  padding: 10px;
+  margin-top: 10px;
+}
+
+.google-btn {
+  background: #db4437;
+  color: white;
+}
+
+.info-container {
+  padding: 20px;
+}
