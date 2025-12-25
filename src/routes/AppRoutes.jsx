@@ -10,6 +10,7 @@ import AdminDashboard from "../pages/Admin/AdminDashboard";
 import WorkerDashboard from "../pages/Worker/WorkerDashboard";
 
 import AppInfo from "../pages/User/AppInfo";
+import HowItWorks from "../pages/user/HowItWorks";
 import SplashScreen from "../pages/Splash/SplashScreen";
 
 
@@ -26,6 +27,7 @@ export default function AppRoutes() {
 
       <Route path="/user" element={<UserDashboard />} />
       <Route path="/user/info" element={<AppInfo />} />
+      <Route path="/how-it-works" element={<HowItWorks />} />
 
       <Route path="/admin" element={<AdminDashboard />} />
       <Route path="/worker" element={<WorkerDashboard />} />

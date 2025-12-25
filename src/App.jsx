@@ -1,6 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import SplashScreen from "./pages/SplashScreen";
-import UserLogin from "./pages/user/UserLogin";
+import UserLogin from "./pages/User/UserLogin";
 import UserRegister from "./pages/User/UserRegister";
 import UserDashboard from "./pages/User/UserDashboard";
 import AdminLogin from "./pages/admin/AdminLogin";
