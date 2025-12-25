@@ -4,7 +4,8 @@ import "./UserDashboard.css";
 
 const UserDashboard = () => {
   const navigate = useNavigate();
-
+  const email = localStorage.getItem("loggedInEmail") || "";
+  const firstName = localStorage.getItem("loggedInName") || "User";
   return (
     <div className="dashboard-container">
       {/* Top Navigation Bar */}
@@ -59,7 +60,7 @@ const UserDashboard = () => {
                 <span className="badge-text">Citizen Dashboard</span>
               </div>
               <h2 className="welcome-title">
-                Welcome back, <span className="highlight">Alex!</span>
+                Welcome back, <span className="highlight">{firstName}</span>
               </h2>
               <p className="welcome-description">
                 Let's keep our city clean together. Your contributions make a visible impact.

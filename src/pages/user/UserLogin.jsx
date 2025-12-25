@@ -10,7 +10,7 @@ const UserLogin = () => {
     userType: 'citizen',
     fullName: '',
     wardNumber: '',
-    emailOrPhone: '',
+    email: '',
     password: '',
     agreeTerms: false
   });
@@ -36,12 +36,12 @@ const UserLogin = () => {
 
     try {
       // Check if input is email or phone
-      const isEmail = formData.emailOrPhone.includes('@');
+      const isEmail = formData.email.includes('@');
       
       if (isEmail) {
         // Sign up with email
         const { data, error } = await supabase.auth.signUp({
-          email: formData.emailOrPhone,
+          email: formData.email,
           password: formData.password,
           options: {
             data: {
@@ -53,33 +53,30 @@ const UserLogin = () => {
         });
 
         if (error) throw error;
+        const user = data.user;
+
+// Insert into profiles table
+const { error: profileError } = await supabase
+  .from("profiles")
+  .insert({
+    id: user.id,
+    email: user.email,
+    full_name: formData.fullName,
+    user_type: formData.userType,
+    ward_number: formData.wardNumber
+  });
+
+if (profileError) throw profileError;
         
         alert('Registration successful! Please check your email for verification.');
-      } else {
-        // Sign up with phone
-        const { data, error } = await supabase.auth.signUp({
-          phone: formData.emailOrPhone,
-          password: formData.password,
-          options: {
-            data: {
-              full_name: formData.fullName,
-              user_type: formData.userType,
-              ward_number: formData.wardNumber
-            }
-          }
-        });
-
-        if (error) throw error;
-        
-        alert('Registration successful! Please verify your phone number.');
-      }
+      } 
 
       // Reset form
       setFormData({
         userType: 'citizen',
         fullName: '',
         wardNumber: '',
-        emailOrPhone: '',
+        email: '',
         password: '',
         agreeTerms: false
       });
@@ -95,19 +92,46 @@ const UserLogin = () => {
     setLoading(true);
 
     try {
-      const isEmail = formData.emailOrPhone.includes('@');
+      const isEmail = formData.email.includes('@');
       
       if (isEmail) {
         const { data, error } = await supabase.auth.signInWithPassword({
-          email: formData.emailOrPhone,
+          email: formData.email,
           password: formData.password
         });
 
         if (error) throw error;
-        navigate('/user/dashboard');
+
+        const user = data.user;
+
+// 2️⃣ Fetch profile using user.id
+const { data: profile, error: profileError } = await supabase
+  .from("profiles")
+  .select("*")
+  .eq("email", user.email)
+        console.log(profile);
+
+        
+        localStorage.setItem('loggedInEmail', profile[0].email);
+        localStorage.setItem('loggedInName', profile[0].full_name.split(' ')[0]);
+        localStorage.setItem('loggedInRole', profile[0].user_type);//citizen,ward or admin
+        //based on role we can navigate to respective dashboard later
+        if(profile[0].user_type==='worker'){
+         alert('Login successful! You are a worker.Worker dashboard coming soon.');
+          return;
+        }
+        else if (profile[0].user_type==='admin'){
+          alert('Login successful! You are an admin.Admin dashboard coming soon.');
+          return;
+        }
+        else if(profile[0].user_type==='citizen'){
+          alert('Login successful! Redirecting to citizen dashboard.');
+          navigate('/user/dashboard');
+        }
+         
       } else {
         const { data, error } = await supabase.auth.signInWithPassword({
-          phone: formData.emailOrPhone,
+          phone: formData.email,
           password: formData.password
         });
 
@@ -217,7 +241,7 @@ const UserLogin = () => {
                       >
                         <option value="citizen">Citizen</option>
                         <option value="worker">Ward Worker</option>
-                        <option value="admin">Administrator</option>
+                
                       </select>
                       <span className="material-symbols-outlined">expand_more</span>
                     </div>
@@ -256,14 +280,14 @@ const UserLogin = () => {
               )}
 
               <div className="login-input-group">
-                <label>Email or Phone Number</label>
+                <label>Email </label>
                 <div className="login-input-wrapper">
                   <input 
-                    type="text" 
-                    name="emailOrPhone"
-                    value={formData.emailOrPhone}
+                    type="email" 
+                    name="email"
+                    value={formData.email}
                     onChange={handleInputChange}
-                    placeholder="Enter your email or phone"
+                    placeholder="Enter your email"
                     required
                   />
                   <span className="material-symbols-outlined">mail</span>
@@ -317,21 +341,14 @@ const UserLogin = () => {
                 </span>
               </button>
 
-              {isRegister && (
-                <div className="login-otp-link">
-                  <button type="button">
-                    <span className="material-symbols-outlined">phonelink_lock</span>
-                    Verify using OTP
-                  </button>
-                </div>
-              )}
+            
             </form>
 
-            <div className="login-divider">
+            {/*<div className="login-divider">
               <span>{isRegister ? 'Or register with' : 'Or log in with'}</span>
             </div>
 
-            <button className="login-google-btn" onClick={handleGoogleSignIn}>
+             <button className="login-google-btn" onClick={handleGoogleSignIn}>
               <svg className="google-icon" viewBox="0 0 24 24">
                 <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
                 <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
@@ -339,7 +356,7 @@ const UserLogin = () => {
                 <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
               </svg>
               <span>Sign {isRegister ? 'up' : 'in'} with Google</span>
-            </button>
+            </button> */}
           </div>
 
           <div className="login-footer">
