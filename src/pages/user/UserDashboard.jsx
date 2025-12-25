@@ -1,52 +1,17 @@
 import React from "react";
 import { useNavigate, Link } from "react-router-dom";
 import "./UserDashboard.css";
+import UserHeader from "./UserHeader";
 
 const UserDashboard = () => {
   const navigate = useNavigate();
   const email = localStorage.getItem("loggedInEmail") || "";
   const firstName = localStorage.getItem("loggedInName") || "User";
   return (
+    <>
+    <UserHeader active="home" />
     <div className="dashboard-container">
-      {/* Top Navigation Bar */}
-      <header className="dashboard-header">
-        <div className="header-content">
-          <div className="header-row">
-            {/* Logo */}
-            <div
-              className="logo-section"
-              onClick={() => navigate("/user/dashboard")}
-              style={{ cursor: "pointer" }}
-            >
-              <div className="logo-icon">
-                <span className="material-symbols-outlined">recycling</span>
-              </div>
-              <h1 className="logo-text">GreenSort</h1>
-            </div>
-
-            {/* Navigation Links */}
-            <nav className="nav-links">
-              <Link className="nav-link active" to="/user/dashboard">Home</Link>
-              <Link className="nav-link" to="/how-it-works">How it Works</Link>
-              <Link className="nav-link" to="/community">Community</Link>
-              <Link className="nav-link" to="/contact">Contact</Link>
-            </nav>
-
-            {/* Right Side Actions */}
-            <div className="header-actions">
-              <button className="notification-btn">
-                <span className="material-symbols-outlined">notifications</span>
-                <span className="notification-badge"></span>
-              </button>
-              <div
-                className="user-avatar"
-                onClick={() => navigate("/user/profile")}
-                style={{ cursor: "pointer" }}
-              ></div>
-            </div>
-          </div>
-        </div>
-      </header>
+     
 
       {/* Main Content */}
       <main className="main-content">
@@ -88,7 +53,7 @@ const UserDashboard = () => {
               {/* Raise Complaint */}
               <div
                 className="action-card primary-card"
-                onClick={() => navigate("/user/complaint/new")}
+                onClick={() => navigate("/user/complaint")}
                 style={{ cursor: "pointer" }}
               >
                 <div className="card-icon-wrapper primary-icon">
@@ -119,7 +84,7 @@ const UserDashboard = () => {
               {/* App Info */}
               <div
                 className="action-card"
-                onClick={() => navigate("/app-info")}
+                onClick={() => navigate("/how-it-works")}
                 style={{ cursor: "pointer" }}
               >
                 <div className="card-icon-wrapper blue-icon">
@@ -151,11 +116,10 @@ const UserDashboard = () => {
         </div>
       </main>
 
-      {/* Footer */}
-      <footer className="dashboard-footer">
-        <span>GreenSort © 2023</span>
-      </footer>
+    
+      
     </div>
+    </>
   );
 };
 
