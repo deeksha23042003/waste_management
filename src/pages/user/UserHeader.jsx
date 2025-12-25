@@ -1,9 +1,17 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { supabase } from "../../supabase";
 import "./UserHeader.css";
 
 const UserHeader = ({ active = "home" }) => {
   const navigate = useNavigate();
+  const [openMenu, setOpenMenu] = useState(false);
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    localStorage.clear();
+    navigate("/user/login");
+  };
 
   return (
     <header className="dashboard-header">
@@ -20,7 +28,7 @@ const UserHeader = ({ active = "home" }) => {
             <h1 className="logo-text">GreenSort</h1>
           </div>
 
-          {/* Navigation */}
+          {/* Navigation (UNCHANGED) */}
           <nav className="nav-links">
             <Link
               className={`nav-link ${active === "home" ? "active" : ""}`}
@@ -55,10 +63,24 @@ const UserHeader = ({ active = "home" }) => {
               <span className="notification-badge"></span>
             </button>
 
-            <div
-              className="user-avatar"
-              onClick={() => navigate("/user/profile")}
-            />
+            {/* Avatar + Dropdown */}
+            <div className="profile-wrapper">
+              <div
+                className="user-avatar"
+                onClick={() => setOpenMenu(!openMenu)}
+              />
+
+              {openMenu && (
+                <div className="profile-dropdown">
+                  <button onClick={() => navigate("/user/profile")}>
+                    Profile
+                  </button>
+                  <button className="logout-btn" onClick={handleLogout}>
+                    Logout
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>

@@ -1,8 +1,10 @@
-import { useState } from 'react';
+import { useState,useEffect } from 'react';
 import { supabase } from '../../supabase.js';
 import './UserLogin.css';
 import { useNavigate } from 'react-router-dom';
+
 const UserLogin = () => {
+   const navigate=useNavigate();
   const [isRegister, setIsRegister] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -23,7 +25,7 @@ const UserLogin = () => {
     }));
   };
 
-  const navigate=useNavigate();
+ 
   const handleRegister = async (e) => {
     e.preventDefault();
     
@@ -125,7 +127,7 @@ const { data: profile, error: profileError } = await supabase
           return;
         }
         else if(profile[0].user_type==='citizen'){
-          alert('Login successful! Redirecting to citizen dashboard.');
+          
           navigate('/user/dashboard');
         }
          

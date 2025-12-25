@@ -1,6 +1,7 @@
 // src/pages/SplashScreen.jsx
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { supabase } from "../supabase";
 import "./SplashScreen.css";
 import logo from "/logo.png";
 
@@ -8,11 +9,48 @@ export default function SplashScreen() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      navigate("/user/login");
-    }, 1700); // slightly faster feels better
+    const boot = async () => {
+      // Optional minimum splash time (UX polish)
+      const minDelay = new Promise(res => setTimeout(res, 2500));
 
-    return () => clearTimeout(timer);
+      // 1️⃣ Check session
+      const { data } = await supabase.auth.getSession();
+      const sessionUser = data?.session?.user;
+
+
+      // 2️⃣ No session → login
+      if (!sessionUser) {
+        navigate("/user/login");
+        return;
+      }
+
+      // 3️⃣ Fetch role
+      const { data: profile, error } = await supabase
+        .from("profiles")
+        .select("user_type")
+        .eq("email", sessionUser.email)
+        .single();
+      await minDelay;
+      if (error || !profile) {
+        navigate("/user/login");
+        return;
+      }
+
+      // 4️⃣ Role based redirect
+      if (profile.user_type === "citizen") {
+        navigate("/user/dashboard");
+      } else if (profile.user_type === "worker") {
+        //navigate("/worker/dashboard");
+        alert("Worker access is not available yet.");
+      } else if (profile.user_type === "admin") {
+        // navigate("/admin/dashboard");
+        alert("Admin access is not available yet.");
+      } else {
+        navigate("/user/login");
+      }
+    };
+
+    boot();
   }, [navigate]);
 
   return (
