@@ -1,7 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import SplashScreen from "./pages/SplashScreen";
 import UserLogin from "./pages/User/UserLogin";
-import UserRegister from "./pages/User/UserRegister";
+
 import UserDashboard from "./pages/User/UserDashboard";
 import AdminLogin from "./pages/admin/AdminLogin";
 import AdminDashboard from "./pages/Admin/AdminDashboard";
@@ -14,7 +14,6 @@ function App() {
       <Routes>
         <Route path="/" element={<SplashScreen />} />
         <Route path="/user/login" element={<UserLogin />} />
-        <Route path="/user/register" element={<UserRegister />} />
         <Route path="/user/dashboard" element={<UserDashboard />} />
         <Route path="/admin/login" element={<AdminLogin />} />
         <Route path="/admin/dashboard" element={<AdminDashboard />} />
