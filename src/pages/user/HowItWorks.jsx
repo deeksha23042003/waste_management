@@ -277,7 +277,7 @@ export default function GreenSortHowItWorks() {
 
         /* How It Works Section */
         .how-it-works-section {
-          max-width: 1200px;
+          max-width: 100vw;
           margin: 0 auto;
           padding: 4rem 1rem;
         }
