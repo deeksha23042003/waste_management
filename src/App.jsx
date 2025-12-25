@@ -8,6 +8,7 @@ import AdminDashboard from "./pages/Admin/AdminDashboard";
 import WorkerLogin from "./pages/Worker/WorkerLogin";
 import WorkerDashboard from "./pages/Worker/WorkerDashboard";
  import HowItWorks from "./pages/user/HowItWorks";
+ import UserComplaintPage from "./pages/user/UserComplaintPage";
 function App() {
   return (
     <Router>
@@ -20,6 +21,7 @@ function App() {
         <Route path="/worker/login" element={<WorkerLogin />} />
         <Route path="/worker/dashboard" element={<WorkerDashboard />} />
         <Route path="/how-it-works" element={<HowItWorks />} />
+        <Route path="/user/complaint" element={<UserComplaintPage />} />
       </Routes>
     </Router>
   );
