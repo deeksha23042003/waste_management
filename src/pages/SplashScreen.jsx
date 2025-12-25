@@ -42,9 +42,11 @@ export default function SplashScreen() {
       } else if (profile.user_type === "worker") {
         //navigate("/worker/dashboard");
         alert("Worker access is not available yet.");
+        navigate("/user/login");
       } else if (profile.user_type === "admin") {
         // navigate("/admin/dashboard");
         alert("Admin access is not available yet.");
+        navigate("/user/login");
       } else {
         navigate("/user/login");
       }
