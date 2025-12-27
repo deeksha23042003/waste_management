@@ -12,7 +12,7 @@ export default function SplashScreen() {
     const boot = async () => {
       // Optional minimum splash time (UX polish)
       const minDelay = new Promise(res => setTimeout(res, 2500));
-
+await minDelay;
       // 1️⃣ Check session
       const { data } = await supabase.auth.getSession();
       const sessionUser = data?.session?.user;
@@ -30,7 +30,7 @@ export default function SplashScreen() {
         .select("user_type")
         .eq("email", sessionUser.email)
         .single();
-      await minDelay;
+      
       if (error || !profile) {
         navigate("/user/login");
         return;
