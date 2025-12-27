@@ -48,6 +48,7 @@ const ResetPassword = () => {
       <input
         type="password"
         placeholder="Enter new password"
+        style={{color:"black"}}
         value={password}
         onChange={(e) => setPassword(e.target.value)}
       />
