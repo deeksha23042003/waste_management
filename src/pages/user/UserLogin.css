@@ -617,3 +617,21 @@
     justify-content: center;
   }
 }
+.forgot-password {
+  text-align: right;
+  margin-top: -0.5rem;
+  margin-bottom: 1rem;
+}
+
+.forgot-link {
+  background: none;
+  border: none;
+  color: #16a34a;
+  font-size: 0.85rem;
+  cursor: pointer;
+  padding: 0;
+}
+
+.forgot-link:hover {
+  text-decoration: underline;
+}

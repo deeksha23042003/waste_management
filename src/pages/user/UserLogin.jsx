@@ -18,6 +18,29 @@ const UserLogin = () => {
     agreeTerms: false
   });
 
+  const handleForgotPassword = async () => {
+  if (!formData.email) {
+    alert("Please enter your email first");
+    return;
+  }
+
+  try {
+    const { error } = await supabase.auth.resetPasswordForEmail(
+      formData.email,
+      {
+        redirectTo: `${window.location.origin}/reset-password`
+      }
+    );
+
+    if (error) throw error;
+
+    alert("Password reset link sent to your email 📩");
+  } catch (err) {
+    alert(err.message);
+  }
+};
+
+
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFormData(prev => ({
@@ -211,6 +234,7 @@ const { data: profile, error: profileError } = await supabase
           </button>
         </header>
 
+
         <div className="login-form-container">
           <div className="login-form-wrapper">
             <div className="login-tabs">
@@ -338,7 +362,18 @@ const { data: profile, error: profileError } = await supabase
                   </button>
                 </div>
               </div>
-
+              {!isRegister && (
+  <div className="forgot-password">
+    <button
+      type="button"
+      className="forgot-link"
+      onClick={handleForgotPassword}
+    >
+      Forgot password?
+    </button>
+  </div>
+)}
+              
               {isRegister && (
                 <div className="login-checkbox-group">
                   <label>
