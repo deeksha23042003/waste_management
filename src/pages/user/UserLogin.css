@@ -338,18 +338,17 @@
 
 .password-toggle {
   position: absolute;
-  right: 0.75rem;
+  right: 12px;
   top: 50%;
   transform: translateY(-50%);
   background: none;
   border: none;
   cursor: pointer;
-  color: #9ca3af;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0;
-  transition: color 0.2s;
+  z-index: 100;   /* higher than input */
+   background: transparent;
+  border: none;
+  outline: none;
+  box-shadow: none;
 }
 
 .password-toggle:hover {
@@ -359,7 +358,11 @@
 .password-toggle .material-symbols-outlined {
   font-size: 1.25rem;
 }
-
+.password-toggle:focus,
+.password-toggle:active {
+  outline: none;
+  box-shadow: none;
+}
 /* Select Styles */
 .login-select-wrapper {
   position: relative;

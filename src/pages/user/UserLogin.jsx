@@ -12,6 +12,7 @@ const UserLogin = () => {
     userType: 'citizen',
     fullName: '',
     wardNumber: '',
+      phone_no: '',   
     email: '',
     password: '',
     agreeTerms: false
@@ -65,6 +66,7 @@ const { error: profileError } = await supabase
     email: user.email,
     full_name: formData.fullName,
     user_type: formData.userType,
+    phone_no: formData.phone_no,
     ward_number: formData.wardNumber
   });
 
@@ -78,6 +80,7 @@ if (profileError) throw profileError;
         userType: 'citizen',
         fullName: '',
         wardNumber: '',
+        phone_no: '',
         email: '',
         password: '',
         agreeTerms: false
@@ -263,6 +266,21 @@ const { data: profile, error: profileError } = await supabase
                       <span className="material-symbols-outlined">person</span>
                     </div>
                   </div>
+                  
+                  <div className="login-input-group">
+                  <label>Phone Number</label>
+                  <div className="login-input-wrapper">
+                    <input
+                      type="tel"
+                      name="phone_no"
+                      value={formData.phone_no}
+                      onChange={handleInputChange}
+                      placeholder="Enter phone number"
+                      required
+                    />
+                    <span className="material-symbols-outlined">call</span>
+                  </div>
+                </div>
 
                   <div className="login-input-group">
                     <label>Ward Number</label>
@@ -310,6 +328,7 @@ const { data: profile, error: profileError } = await supabase
                   <span className="material-symbols-outlined icon-left">lock</span>
                   <button 
                     type="button"
+                    style={{zIndex:"22"}}
                     className="password-toggle"
                     onClick={() => setShowPassword(!showPassword)}
                   >
