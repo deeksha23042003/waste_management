@@ -1,16 +1,35 @@
-# React + Vite
+# 🌱 GreenSort – Smart Waste Management System
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+GreenSort is a smart, citizen-centric waste management web application that enables users to report waste issues with photo evidence, GPS location, and ward details. The system helps municipal authorities manage waste efficiently and supports smart city initiatives.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🚀 Features
 
-## React Compiler
+- 👤 User authentication (Login / Register / Forgot Password)
+- 📸 Capture waste images using mobile camera or upload from desktop
+- 📍 Auto-detect GPS location (mobile GPS & Wi-Fi based on desktop)
+- 🏘️ Ward-wise waste complaint reporting
+- ☁️ Image storage using Supabase Storage
+- 🔐 Secure authentication with Supabase Auth
+- 🌐 Fully deployed on Vercel with HTTPS
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+---
 
-## Expanding the ESLint configuration
+## 🛠️ Tech Stack
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+### Frontend
+- React.js (Vite)
+- HTML5, CSS3
+- Material Symbols Icons
+
+### Backend & Services
+- Supabase (Auth, Database, Storage)
+- Browser Geolocation API
+- Camera / File Input API
+
+### Deployment
+- Vercel
+
+
+
