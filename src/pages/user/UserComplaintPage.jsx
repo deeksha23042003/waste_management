@@ -317,7 +317,7 @@ const handleSubmit = async (e) => {
 
                 <div className="form-section">
                   <label htmlFor="address" className="form-label">
-                    3. Landmark / Address <span className="required">*</span>
+                    3. Address <span className="required">*</span>
                   </label>
                   <div className="input-wrapper">
                     <input
@@ -325,12 +325,13 @@ const handleSubmit = async (e) => {
                       id="address"
                       name="address"
                       type="text"
-                      placeholder="e.g. Near the main gate of Central Park"
+                     placeholder="e.g.House No. 45, 3rd Cross, Ward 7"
+
                       value={formData.address}
                       onChange={handleInputChange}
                     />
                   </div>
-                  <p className="input-hint">Provide a nearby landmark to help workers find the spot.</p>
+                  <p className="input-hint"> Enter the street name, area for accurate collection.</p>
                 </div>
               </div>
               <div className="form-section">
