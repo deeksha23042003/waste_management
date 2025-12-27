@@ -635,3 +635,12 @@
 .forgot-link:hover {
   text-decoration: underline;
 }
+.forgot-password-link {
+  outline: none;
+}
+
+.forgot-link:focus,
+.forgot-link:focus-visible {
+  outline: none;
+  box-shadow: none;
+}
