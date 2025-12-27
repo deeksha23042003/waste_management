@@ -45,7 +45,7 @@ const uploadImageToSupabase = async (file, email) => {
 };
 
 
-  // Simulated user data (in a real app, this would come from props or context)
+
   const userData = {
     email:localStorage.getItem('loggedInEmail') || '',
     name: localStorage.getItem('loggedInName') || '',
@@ -239,22 +239,43 @@ const handleSubmit = async (e) => {
                       </div>
                     ) : (
                       <>
-                        <span className="material-symbols-outlined upload-icon">cloud_upload</span>
+                        <span className="material-symbols-outlined upload-icon">
+                    {  /Android|iPhone|iPad/i.test(navigator.userAgent)
+                        ? "photo_camera"
+                      : "cloud_upload"}
+</span>
                         <div className="upload-text">
-                          <label htmlFor="file-upload" className="upload-label">
-                            <span>Upload a file</span>
+                        <label htmlFor="file-upload" className="upload-label">
+  <span>
+    { /Android|iPhone|iPad/i.test(navigator.userAgent)
+      ? "Take a photo"
+      : "Upload a photo"
+    }
+  </span>
+
+  <input
+    id="file-upload"
+    type="file"
+    accept="image/*"
+    capture="environment"
+    className="file-input"
+    onChange={handleFileChange}
+  />
+
+
                             <input
                               id="file-upload"
                               name="file-upload"
                               type="file"
+                              capture="environment"
                               className="file-input"
                               accept="image/*"
                               onChange={handleFileChange}
                             />
                           </label>
-                          <p className="upload-text-secondary">or drag and drop</p>
+                          
                         </div>
-                        <p className="upload-hint">PNG, JPG, GIF up to 10MB</p>
+                        
                       </>
                     )}
                   </div>
