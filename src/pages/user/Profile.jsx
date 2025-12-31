@@ -4,6 +4,8 @@ import './Profile.css';
 import UserHeader from './UserHeader.jsx';
 const Profile = () => {
   const [user, setUser] = useState(null);
+
+  const avatarUrl = localStorage.getItem("avatarUrl");
   const [profile, setProfile] = useState({
     full_name: '',
     email: '',
@@ -13,6 +15,58 @@ const Profile = () => {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });
+const [uploading, setUploading] = useState(false);
+const [avatar, setAvatar] = useState(avatarUrl || null);
+
+const uploadAvatar = async (file) => {
+  try {
+    setUploading(true);
+
+    if (!file || !user) return;
+
+    const fileExt = file.name.split(".").pop();
+    const fileName = `${user.id}.${fileExt}`;
+    const filePath = fileName;
+
+    // Upload to AvatarBucket
+    const { error: uploadError } = await supabase.storage
+      .from("AvatarBucket")
+      .upload(filePath, file, {
+        upsert: true,
+        cacheControl: "3600",
+      });
+
+    if (uploadError) throw uploadError;
+
+    // Get public URL
+    const { data } = supabase.storage
+      .from("AvatarBucket")
+      .getPublicUrl(filePath);
+
+    // Save URL in profiles table
+    const { error: updateError } = await supabase
+      .from("profiles")
+      .update({ avatar_url: data.publicUrl })
+      .eq("id", user.id);
+
+    if (updateError) throw updateError;
+
+    const freshUrl = `${data.publicUrl}?t=${Date.now()}`;
+// the public URL remains the same. Browsers cache images aggressively,
+// so the updated image may not appear immediately.
+// Adding a timestamp query parameter forces the browser to reload
+// the latest version of the profile image.
+setAvatar(freshUrl);
+localStorage.setItem("avatarUrl", freshUrl);
+
+    setMessage({ type: "success", text: "Profile photo updated!" });
+  } catch (error) {
+    console.error(error);
+    setMessage({ type: "error", text: "Failed to upload avatar" });
+  } finally {
+    setUploading(false);
+  }
+};
 
   useEffect(() => {
     getProfile();
@@ -133,14 +187,29 @@ const Profile = () => {
         <div className="profile-grid">
           <aside className="profile-sidebar">
             <div className="profile-card">
-              <div className="profile-avatar-wrapper">
-                <div className="profile-avatar">
-                  <img src={`https://ui-avatars.com/api/?name=${encodeURIComponent(profile.full_name || 'User')}&background=0df20d&color=000&size=128`} alt="Profile" />
-                </div>
-                <button className="avatar-upload-btn" title="Upload new photo">
-                  <span className="material-symbols-outlined">photo_camera</span>
-                </button>
-              </div>
+            <div className="profile-avatar-wrapper">
+  <div className="profile-avatar">
+    <img
+      src={avatar || "/default-avatar.png"}
+      alt="Profile"
+    />
+  </div>
+
+  <label className="avatar-upload-btn" title="Upload new photo">
+    <span className="material-symbols-outlined">
+      {uploading ? "hourglass_top" : "photo_camera"}
+    </span>
+
+    <input
+      type="file"
+      accept="image/*"
+      hidden
+      onChange={(e) => uploadAvatar(e.target.files[0])}
+      disabled={uploading}
+    />
+  </label>
+</div>
+
               <h3>{profile.full_name || 'User'}</h3>
               <p className="profile-email">{profile.email}</p>
               

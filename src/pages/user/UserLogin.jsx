@@ -142,6 +142,7 @@ const { data: profile, error: profileError } = await supabase
         
         localStorage.setItem('loggedInEmail', profile[0].email);
         localStorage.setItem('loggedInName', profile[0].full_name.split(' ')[0]);
+        localStorage.setItem("avatarUrl",profile[0].avatar_url);
         localStorage.setItem('loggedInRole', profile[0].user_type);//citizen,ward or admin
         //based on role we can navigate to respective dashboard later
         if(profile[0].user_type==='worker'){

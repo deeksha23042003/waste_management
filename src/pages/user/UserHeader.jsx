@@ -6,7 +6,7 @@ import "./UserHeader.css";
 const UserHeader = ({ active = "home" }) => {
   const navigate = useNavigate();
   const [openMenu, setOpenMenu] = useState(false);
-
+  const avatarUrl = localStorage.getItem("avatarUrl");
   const handleLogout = async () => {
     await supabase.auth.signOut();
     localStorage.clear();
@@ -65,10 +65,13 @@ const UserHeader = ({ active = "home" }) => {
 
             {/* Avatar + Dropdown */}
             <div className="profile-wrapper">
-              <div
+              <img
                 className="user-avatar"
+                   src={avatarUrl}
+                   alt="User Avatar"
                 onClick={() => setOpenMenu(!openMenu)}
               />
+     
 
               {openMenu && (
                 <div className="profile-dropdown">
