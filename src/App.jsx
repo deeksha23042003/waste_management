@@ -8,6 +8,7 @@ import ResetPassword from "./pages/ResetPassword";
  import HowItWorks from "./pages/user/HowItWorks";
  import UserComplaintPage from "./pages/user/UserComplaintPage";
  import Profile from "./pages/user/Profile";
+  import Feedback from "./pages/user/Feedback";
 function App() {
   return (
     <Router>
@@ -19,6 +20,7 @@ function App() {
         <Route path="/user/complaint" element={<UserComplaintPage />} />
         <Route path="/user/profile" element={<Profile />} />
         <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/user/feedback" element={<Feedback />} />
 
       </Routes>
     </Router>
