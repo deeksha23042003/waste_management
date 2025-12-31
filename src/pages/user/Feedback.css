@@ -36,19 +36,14 @@
   box-sizing: border-box;
 }
 
-body {
-  font-family: 'Public Sans', sans-serif;
-  background-color: var(--background-light);
-  color: var(--text-main);
-  min-height: 100vh;
-}
+
 
 .feedback-main {
   flex-grow: 1;
 }
 
 .feedback-container {
-  max-width: 1200px;
+ width: 100vw;
   margin: 0 auto;
   padding: 3rem 1rem;
 }

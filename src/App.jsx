@@ -20,7 +20,7 @@ function App() {
         <Route path="/user/complaint" element={<UserComplaintPage />} />
         <Route path="/user/profile" element={<Profile />} />
         <Route path="/reset-password" element={<ResetPassword />} />
-        <Route path="/user/feedback" element={<Feedback />} />
+        <Route path="/user/contact" element={<Feedback />} />
 
       </Routes>
     </Router>

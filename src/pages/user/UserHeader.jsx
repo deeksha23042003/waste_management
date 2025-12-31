@@ -50,7 +50,7 @@ const UserHeader = ({ active = "home" }) => {
             </Link>
             <Link
               className={`nav-link ${active === "contact" ? "active" : ""}`}
-              to="/contact"
+              to="/user/contact"
             >
               Contact
             </Link>
