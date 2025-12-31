@@ -190,7 +190,7 @@ const Feedback = () => {
               <form onSubmit={handleSubmit} className="feedback-form">
                 <div className="form-row">
                   <div className="form-group">
-                    <label htmlFor="name">Full Name</label>
+                    <label htmlFor="name">Name</label>
                     <div className="input-wrapper">
                       <span className="material-symbols-outlined input-icon">person</span>
                       <input
@@ -201,6 +201,7 @@ const Feedback = () => {
                         onChange={handleChange}
                         placeholder="John Doe"
                         required
+                        disabled
                       />
                     </div>
                   </div>
@@ -217,6 +218,7 @@ const Feedback = () => {
                         onChange={handleChange}
                         placeholder="john@example.com"
                         required
+                        disabled
                       />
                     </div>
                   </div>
