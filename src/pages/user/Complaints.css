@@ -1,0 +1,389 @@
+/* ===============================
+   Complaints Page
+================================ */
+.complaints-page {
+  background-color: #f8fcf8;
+  min-height: 100vh;
+  width: 100%;
+}
+
+.complaints-container {
+  width: 100vw;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+/* ===============================
+   Page Header
+================================ */
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 2rem;
+  margin-bottom: 2.5rem;
+}
+
+.page-title {
+  font-size: 2.25rem;
+  font-weight: 800;
+  color: #0d1c0d;
+}
+
+.page-subtitle {
+  font-size: 1.125rem;
+  color: #6b7280;
+}
+
+.btn-report-new {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background: #0df20d;
+  color: #000;
+  font-weight: 700;
+  border-radius: 9999px;
+  border: none;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.btn-report-new:hover {
+  background: #0be00b;
+  transform: translateY(-2px);
+}
+
+/* ===============================
+   Filters & Search
+================================ */
+.controls-section {
+  display: flex;
+  justify-content: space-between;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.filter-tabs {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.filter-tab {
+  padding: 0.6rem 1.25rem;
+  border-radius: 9999px;
+  background: #fff;
+  border: 1px solid #cee8ce;
+  cursor: pointer;
+  font-size: 0.85rem;
+  background: #fff;
+  color: #000;
+}
+
+.filter-tab.active {
+  background:#000 ;
+  color: #fff;
+}
+
+.search-container {
+  position: relative;
+  max-width: 320px;
+  width: 100%;
+}
+
+.search-icon {
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #9ca3af;
+}
+
+.search-input {
+  width: 100%;
+  padding: 0.7rem 1rem 0.7rem 2.7rem;
+  border-radius: 9999px;
+  border: none;
+  outline: none;
+}
+
+/* ===============================
+   Grid & Cards
+================================ */
+.complaints-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 2rem;
+}
+
+.complaint-card {
+  background: #fff;
+  border-radius: 1.5rem;
+  overflow: hidden;
+  box-shadow: 0 0 3px rgba(10, 10, 10, 0.6) ;
+  transition: 0.3s;
+}
+
+.complaint-card:hover {
+  transform: translateY(-4px);
+}
+
+/* ===============================
+   Card Image
+================================ */
+.card-image-section {
+  position: relative;
+  height: 16rem;
+}
+
+.complaint-image {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+}
+
+.complaint-image-placeholder {
+  position: absolute;
+  inset: 0;
+  background: #f3f4f6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.image-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
+}
+
+/* ===============================
+   Status Badges
+================================ */
+.badge-status {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  padding: 0.35rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  display: flex;
+  gap: 0.25rem;
+  color: #fff;
+}
+
+.status-pending { background: #6b7280; }
+.status-progress { background: #f97316; }
+.status-resolved { background: #22c55e; }
+
+/* ===============================
+   Card Content
+================================ */
+.card-info-overlay {
+  position: absolute;
+  bottom: 1rem;
+  left: 1rem;
+  right: 1rem;
+  color: #fff;
+}
+
+.complaint-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.complaint-address {
+  display: flex;
+  gap: 0.25rem;
+  font-size: 0.85rem;
+  color: #e5e7eb;
+}
+
+.card-body {
+  padding: 1.5rem;
+}
+
+/* ===============================
+   Pending State
+================================ */
+.pending-text {
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
+.btn-action-cancel {
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  background: #f3f4f6;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-action-cancel:hover {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+/* ===============================
+   Modal
+================================ */
+.complaint-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: 0.3s;
+}
+
+.modal-dialog {
+  background: #fff;
+  max-width: 80rem;
+  width: 100%;
+  border-radius: 1.5rem;
+  display: flex;
+  overflow: hidden;
+}
+
+.modal-left,
+.modal-right {
+  width: 50%;
+}
+
+.modal-right {
+  padding: 2rem;
+  overflow-y: auto;
+}
+
+/* ===============================
+   Responsive
+================================ */
+@media (max-width: 768px) {
+  .page-header,
+  .controls-section {
+    flex-direction: column;
+  }
+
+  .complaints-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .modal-dialog {
+    flex-direction: column;
+  }
+
+  .modal-left,
+  .modal-right {
+    width: 100%;
+  }
+}
+/* FIX: Card image width overflow */
+.card-image-section {
+  width: 100%;
+  height: 16rem;        /* keeps image height consistent */
+  overflow: hidden;
+  border-top-left-radius: 1.5rem;
+  border-top-right-radius: 1.5rem;
+}
+
+.complaint-image {
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+}
+/* FIX: Search input width */
+.search-container {
+  max-width: 320px;
+  width: 100%;
+}
+
+.search-input {
+  width: 100%;
+  box-sizing: border-box;
+  background-color: white;
+}
+/* FIX: Exactly 3 cards per row */
+.complaints-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+}
+/* Tablet */
+@media (max-width: 1024px) {
+  .complaints-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Mobile */
+@media (max-width: 640px) {
+  .complaints-grid {
+    grid-template-columns: 1fr;
+  }
+}
+/* ===============================
+   Pending Action Buttons
+================================ */
+.pending-buttons {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.btn-action-cancel,
+.btn-action-edit {
+  flex: 1;
+  padding: 0.6rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  border: none;
+  transition: all 0.25s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Cancel (secondary / danger-light) */
+.btn-action-cancel {
+  background: #f3f4f6;
+  color: #6b7280;
+}
+
+.btn-action-cancel:hover {
+  background: #fee2e2;
+  color: #dc2626;
+  transform: translateY(-1px);
+}
+
+.btn-action-cancel:active {
+  transform: scale(0.95);
+}
+
+/* Edit (primary neutral) */
+.btn-action-edit {
+  background: #111827;
+  color: #ffffff;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.btn-action-edit:hover {
+  background: #0df20d;
+  color: #000;
+  box-shadow: 0 10px 20px rgba(13, 242, 13, 0.4);
+  transform: translateY(-1px);
+}
+
+.btn-action-edit:active {
+  transform: scale(0.95);
+}
+.page-header .header-content{
+margin: 0px;
+}
