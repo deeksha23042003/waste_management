@@ -4,6 +4,8 @@ import './UserLogin.css';
 import { useNavigate } from 'react-router-dom';
 
 const UserLogin = () => {
+  const [wards, setWards] = useState([]);
+
    const navigate=useNavigate();
   const [isRegister, setIsRegister] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
@@ -17,6 +19,23 @@ const UserLogin = () => {
     password: '',
     agreeTerms: false
   });
+
+  useEffect(() => {
+  const fetchWards = async () => {
+    const { data, error } = await supabase
+      .from("ward_details")
+      .select("ward_number, ward_name")
+      .order("ward_number", { ascending: true });
+
+    if (error) {
+      console.error("Error fetching wards:", error);
+    } else {
+      setWards(data);
+    }
+  };
+
+  fetchWards();
+}, []);
 
   const handleForgotPassword = async () => {
   if (!formData.email) {
@@ -308,19 +327,25 @@ const { data: profile, error: profileError } = await supabase
                 </div>
 
                   <div className="login-input-group">
-                    <label>Ward Number</label>
-                    <div className="login-input-wrapper">
-                      <input 
-                        type="number" 
-                        name="wardNumber"
-                        value={formData.wardNumber}
-                        onChange={handleInputChange}
-                        placeholder="e.g. 12"
-                        required
-                      />
-                      <span className="material-symbols-outlined">map</span>
-                    </div>
-                  </div>
+  <label>Ward</label>
+  <div className="login-select-wrapper">
+    <select
+      name="wardNumber"
+      value={formData.wardNumber}
+      onChange={handleInputChange}
+      required
+    >
+      <option value="">Select Ward</option>
+      {wards.map((ward) => (
+        <option key={ward.ward_number} value={ward.ward_number}>
+          Ward {ward.ward_number} – {ward.ward_name}
+        </option>
+      ))}
+    </select>
+    <span className="material-symbols-outlined">expand_more</span>
+  </div>
+</div>
+
                 </>
               )}
 
