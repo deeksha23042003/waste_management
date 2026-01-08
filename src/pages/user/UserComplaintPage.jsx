@@ -12,7 +12,7 @@ const [formData, setFormData] = useState({
   description: '',
   ward_number: ''
 });
-
+ const [wards, setWards] = useState([]);
   const [imagePreview, setImagePreview] = useState(null);
   
   const [location, setLocation] = useState({
@@ -22,6 +22,22 @@ const [formData, setFormData] = useState({
   loading: true,
   error: null
 });
+  useEffect(() => {
+  const fetchWards = async () => {
+    const { data, error } = await supabase
+      .from("ward_details")
+      .select("ward_number, ward_name")
+      .order("ward_number", { ascending: true });
+
+    if (error) {
+      console.error("Error fetching wards:", error);
+    } else {
+      setWards(data);
+    }
+  };
+
+  fetchWards();
+}, []);
 
 const uploadImageToSupabase = async (file, email) => {
   const fileExt = file.name.split('.').pop();
@@ -157,7 +173,8 @@ const handleSubmit = async (e) => {
           image_url: imageUrl,
           location: `${location.lat}, ${location.lng}`,
           address: formData.address,
-          ward_number: formData.ward_number
+          ward_number: formData.ward_number,
+          description: formData.description
         }
       ]);
 
@@ -339,15 +356,22 @@ const handleSubmit = async (e) => {
                   4. Ward Number <span className="required">*</span>
                 </label>
                 <div className="input-wrapper">
-                  <input
-                    className="form-input"
-                    id="ward_number"
-                    name="ward_number"
-                    type="number"
-                    placeholder="Enter your ward number"
-                    value={formData.ward_number}
-                    onChange={handleInputChange}
-                  />
+                 
+                  <select
+      name="ward_number"
+      className='selectWardComp'
+      id="ward_number"
+      value={formData.ward_number}
+      onChange={handleInputChange}
+      required
+    >
+      <option value="">Select Ward</option>
+      {wards.map((ward) => (
+        <option key={ward.ward_number} value={ward.ward_number}>
+          Ward {ward.ward_number} – {ward.ward_name}
+        </option>
+      ))}
+    </select>
                 </div>
               </div>
               <div className="form-section">
