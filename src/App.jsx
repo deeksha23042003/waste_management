@@ -10,7 +10,7 @@ import ResetPassword from "./pages/ResetPassword";
  import Profile from "./pages/user/Profile";
   import Feedback from "./pages/user/Feedback";
   import Complaints from "./pages/user/Complaints";
-
+import ErrorPage from "./pages/ErrorPage";
 function App() {
   return (
     <Router>
@@ -24,7 +24,7 @@ function App() {
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/user/contact" element={<Feedback />} />
         <Route path="/user/complaints" element={<Complaints />} />
-
+        <Route path="*" element={<ErrorPage />} />
       </Routes>
     </Router>
   );
