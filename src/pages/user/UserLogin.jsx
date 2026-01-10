@@ -165,7 +165,7 @@ const { data: profile, error: profileError } = await supabase
         localStorage.setItem('loggedInRole', profile[0].user_type);//citizen,ward or admin
         //based on role we can navigate to respective dashboard later
         if(profile[0].user_type==='worker'){
-         alert('Login successful! You are a worker.Worker dashboard coming soon.');
+       navigate('/wardworker/dashboard');
           return;
         }
         else if (profile[0].user_type==='admin'){

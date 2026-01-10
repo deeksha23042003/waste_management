@@ -11,6 +11,7 @@ import ResetPassword from "./pages/ResetPassword";
   import Feedback from "./pages/user/Feedback";
   import Complaints from "./pages/user/Complaints";
 import ErrorPage from "./pages/ErrorPage";
+import WardWorkerPage from "./pages/wardworker/WardWorkerPage";
 function App() {
   return (
     <Router>
@@ -24,6 +25,7 @@ function App() {
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/user/contact" element={<Feedback />} />
         <Route path="/user/complaints" element={<Complaints />} />
+        <Route path="/wardworker/dashboard" element={<WardWorkerPage />} />
         <Route path="*" element={<ErrorPage />} />
       </Routes>
     </Router>
