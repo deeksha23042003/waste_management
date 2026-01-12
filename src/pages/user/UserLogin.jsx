@@ -305,6 +305,8 @@ const { data: profile, error: profileError } = await supabase
                         value={formData.fullName}
                         onChange={handleInputChange}
                         placeholder="John Doe"
+                        pattern="[A-Za-z ]{3,}"
+                        title="Only letters and spaces, minimum 3 characters"
                         required
                       />
                       <span className="material-symbols-outlined">person</span>
@@ -314,14 +316,18 @@ const { data: profile, error: profileError } = await supabase
                   <div className="login-input-group">
                   <label>Phone Number</label>
                   <div className="login-input-wrapper">
+                             {/* 1 number from 6-9 and 9 other numbers */}
                     <input
                       type="tel"
                       name="phone_no"
                       value={formData.phone_no}
                       onChange={handleInputChange}
                       placeholder="Enter phone number"
+                      pattern="[6-9][0-9]{9}"
+                      title="Enter a valid 10-digit Indian phone number"
                       required
                     />
+          
                     <span className="material-symbols-outlined">call</span>
                   </div>
                 </div>
@@ -353,11 +359,13 @@ const { data: profile, error: profileError } = await supabase
                 <label>Email </label>
                 <div className="login-input-wrapper">
                   <input 
-                    type="email" 
+                    type="text" 
                     name="email"
                     value={formData.email}
                     onChange={handleInputChange}
                     placeholder="Enter your email"
+                    pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
+                    title="Enter a valid email address (example: user@gmail.com)"
                     required
                   />
                   <span className="material-symbols-outlined">mail</span>
