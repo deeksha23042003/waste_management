@@ -46,13 +46,13 @@ const UserHeader = ({ active = "home" }) => {
               className={`nav-link ${active === "complaints" ? "active" : ""}`}
               to="/user/complaints"
             >
-              Complaints
+             My Complaints
             </Link>
             <Link
               className={`nav-link ${active === "contact" ? "active" : ""}`}
               to="/user/contact"
             >
-              Contact
+              Feedback
             </Link>
           </nav>
 
