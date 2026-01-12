@@ -4,7 +4,7 @@ import './Profile.css';
 import UserHeader from './UserHeader.jsx';
 const Profile = () => {
   const [user, setUser] = useState(null);
-
+ const [wards, setWards] = useState([]);
   const avatarUrl = localStorage.getItem("avatarUrl");
   const [profile, setProfile] = useState({
     full_name: '',
@@ -17,6 +17,23 @@ const Profile = () => {
   const [message, setMessage] = useState({ type: '', text: '' });
 const [uploading, setUploading] = useState(false);
 const [avatar, setAvatar] = useState(avatarUrl || null);
+
+ useEffect(() => {
+  const fetchWards = async () => {
+    const { data, error } = await supabase
+      .from("ward_details")
+      .select("ward_number, ward_name")
+      .order("ward_number", { ascending: true });
+
+    if (error) {
+      console.error("Error fetching wards:", error);
+    } else {
+      setWards(data);
+    }
+  };
+
+  fetchWards();
+}, []);
 
 const uploadAvatar = async (file) => {
   try {
@@ -291,13 +308,20 @@ localStorage.setItem("avatarUrl", freshUrl);
                       <label>Ward Number</label>
                       <div className="input-wrapper">
                         <span className="material-symbols-outlined input-icon">map</span>
-                        <input
-                          type="number"
-                          name="ward_number"
-                          value={profile.ward_number}
-                          onChange={handleChange}
-                          placeholder="Enter ward number"
-                        />
+                        
+<select
+  name="ward_number"
+  value={profile.ward_number || ""}
+  onChange={handleChange}
+>
+  <option value="">Select Ward</option>
+  {wards.map((ward) => (
+    <option key={ward.ward_number} value={ward.ward_number}>
+      Ward {ward.ward_number} – {ward.ward_name}
+    </option>
+  ))}
+</select>
+
                       </div>
                       <p className="input-help">Integer value for your specific municipal ward.</p>
                     </div>
