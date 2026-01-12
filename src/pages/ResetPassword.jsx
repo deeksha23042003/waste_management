@@ -5,6 +5,7 @@ import "./ResetPassword.css";
 
 const ResetPassword = () => {
   const [password, setPassword] = useState("");
+  const[confpassword,setConfpassword]=useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
@@ -19,7 +20,11 @@ const ResetPassword = () => {
 
   const handleReset = async () => {
     setLoading(true);
-
+if(password!==confpassword && password.length>0 && confpassword.length>0){
+  alert("Passwords do not match");
+  setLoading(false);
+  return;
+}
     const { error } = await supabase.auth.updateUser({
       password,
     });
@@ -54,6 +59,15 @@ const ResetPassword = () => {
       />
     </div>
 
+ <div className="reset-input-wrapper">
+      <input
+        type="password"
+        placeholder="Confirm new password"
+        style={{color:"black"}}
+        value={confpassword}
+        onChange={(e) => setConfpassword(e.target.value)}
+      />
+    </div>
     <button className="reset-btn" onClick={handleReset}>
       Update Password
     </button>
