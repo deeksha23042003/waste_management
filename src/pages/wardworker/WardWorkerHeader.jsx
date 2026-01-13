@@ -1,7 +1,45 @@
-import React from 'react';
+import React, { useState,useEffect } from 'react';
 import './WardWorkerHeader.css';
-
+import { supabase } from '../../supabase';
 const WardWorkerHeader = () => {
+  const [avatarUrl,setAvatarUrl] = useState("");
+  const [name,setName]=useState("");
+const [wardNumber, setWardNumber] = useState("");
+
+
+ const fetchProfile = async () => {
+    // 1️⃣ Get logged-in user from Supabase session
+    const {
+      data: { user },
+      error: userError,
+    } = await supabase.auth.getUser();
+
+    if (userError || !user) {
+      console.error("User not logged in");
+      return;
+    }
+
+    // 2️⃣ Fetch profile details using user.id
+    const { data, error } = await supabase
+      .from("profiles")
+      .select("full_name, ward_number, avatar_url")
+      .eq("id", user.id)
+      .single();
+
+    if (error) {
+      console.error("Error fetching profile:", error);
+      return;
+    }
+
+    // 3️⃣ Set state
+    setName(data.full_name);
+    setWardNumber(data.ward_number);
+    setAvatarUrl(data.avatar_url);
+  };
+  useEffect(()=>{
+    fetchProfile();
+  },[])
+
   return (
     <nav className="ward-header">
       <div className="ward-header-container">
@@ -30,25 +68,19 @@ const WardWorkerHeader = () => {
           </div>
 
           <div className="ward-header-right">
-            <div className="ward-status">
-              <span className="status-indicator">
-                <span className="status-ping"></span>
-                <span className="status-dot"></span>
-              </span>
-              <span className="status-text">Active</span>
-            </div>
+           
             
             <div className="ward-divider"></div>
             
             <div className="ward-profile">
               <div className="profile-info">
-                <p className="profile-name">Raju Kumar</p>
-                <p className="profile-ward">Ward #12</p>
+                <p className="profile-name">{name|| ""}</p>
+                <p className="profile-ward">Ward {wardNumber}</p>
               </div>
               <img 
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuBJJKTWTarzXrCwSmcrZR9CZB4mWVGHc6HO3rjq1PuNeLjJzllfkKN4qNmW-98DF9PoCHPLCZUBmWlwSLLL72cGN1QWhjjT8Kw6x7mnH2YyEiKWZdtHswnj8249ifzJL3urjTxOt61xLYp-9eWZ2Ew0FF6xuYkm_y84NDXpnNxhDkmMHjgGoUz7mPm2NYNaq2MVGfohaZ71hZWPdizJrg5dcD2bJyHeqEiDBPQ70xRKs126-Mx-7RHDdW34c0SvpW0dDTyvfne2EQQ"
+                 src={avatarUrl || "https://rdxbrzfvjahdkzmpqwuc.supabase.co/storage/v1/object/public/WasteLocationBucket/default.jpg"}
                 alt="Profile"
-                className="profile-avatar"
+                className="ward-profile-avatar"
               />
             </div>
           </div>

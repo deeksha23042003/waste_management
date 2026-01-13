@@ -40,9 +40,7 @@ await minDelay;
       if (profile.user_type === "citizen") {
         navigate("/user/dashboard");
       } else if (profile.user_type === "worker") {
-        //navigate("/worker/dashboard");
-        alert("Worker access is not available yet.");
-        navigate("/user/login");
+        navigate("/wardworker/dashboard");
       } else if (profile.user_type === "admin") {
         // navigate("/admin/dashboard");
         alert("Admin access is not available yet.");

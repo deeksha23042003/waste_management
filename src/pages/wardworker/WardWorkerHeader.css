@@ -145,35 +145,11 @@
   gap: 1.25rem;
 }
 
-.ward-status {
-  display: none;
-  align-items: center;
-  gap: 0.5rem;
-}
 
-@media (min-width: 1024px) {
-  .ward-status {
-    display: flex;
-  }
-}
 
-.status-indicator {
-  position: relative;
-  display: flex;
-  height: 0.5rem;
-  width: 0.5rem;
-}
 
-.status-ping {
-  position: absolute;
-  display: inline-flex;
-  height: 100%;
-  width: 100%;
-  border-radius: 9999px;
-  background-color: #4ade80;
-  opacity: 0.75;
-  animation: ping 1s cubic-bezier(0, 0, 0.2, 1) infinite;
-}
+
+
 
 @keyframes ping {
   75%, 100% {
@@ -182,22 +158,9 @@
   }
 }
 
-.status-dot {
-  position: relative;
-  display: inline-flex;
-  height: 0.5rem;
-  width: 0.5rem;
-  border-radius: 9999px;
-  background-color: #22c55e;
-}
 
-.status-text {
-  font-size: 0.75rem;
-  color: #64748b;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
+
+
 
 .ward-divider {
   height: 2rem;
@@ -243,17 +206,16 @@
   margin: 0;
 }
 
-.profile-avatar {
-  width: 2.25rem;
-  height: 2.25rem;
+.ward-profile-avatar {
+  width: 3rem;
+  height: 3rem;
   border-radius: 9999px;
- 
   padding: 0.125rem;
   cursor: pointer;
   transition: all 0.2s;
   box-shadow: 0 0 0 2px #4ade80;
 }
 
-.profile-avatar:hover {
+.ward-profile-avatar:hover {
   box-shadow: 0 0 0 2px #22c55e;
 }
