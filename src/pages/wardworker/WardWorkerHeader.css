@@ -16,12 +16,13 @@
   z-index: 50;
   border-bottom: 1px solid #f1f5f9;
   font-family: 'Public Sans', sans-serif;
+  width: 100vw;
+  margin-top:0px ;
 }
 
 .ward-header-container {
   max-width: 80rem;
   margin: 0 auto;
-  padding: 0 1rem;
 }
 
 @media (min-width: 640px) {

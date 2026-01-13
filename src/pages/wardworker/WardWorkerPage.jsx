@@ -4,6 +4,8 @@ const ComponentName = () => {
   return (
     <div>
       <WardWorkerHeader />
+      <div style={{height:"89vh"}}></div> 
+      {/* added dummy content so header stays up */}
     </div>
   );
 };
