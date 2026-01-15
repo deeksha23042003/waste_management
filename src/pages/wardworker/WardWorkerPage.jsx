@@ -25,6 +25,35 @@ const WardWorkerPage = () => {
     }
   }, [profile, filter]);
 
+  // Check if location has valid lat & lng
+const hasValidLocation = (location) => {
+  if (!location || typeof location !== "string") return false;
+
+  const parts = location.trim().split(",");
+
+  if (parts.length !== 2) return false;
+
+  const lat = parseFloat(parts[0].trim());
+  const lng = parseFloat(parts[1].trim());
+
+  return (
+    !isNaN(lat) &&
+    !isNaN(lng) &&
+    lat !== 0 &&
+    lng !== 0
+  );
+};
+
+// Open Google Maps
+const openInGoogleMaps = (location) => {
+  const [lat, lng] = location.split(",").map(v => v.trim());
+  window.open(
+    `https://www.google.com/maps?q=${lat},${lng}`,
+    "_blank"
+  );
+};
+
+
   const checkUser = async () => {
     try {
       const { data: { session } } = await supabase.auth.getSession();
@@ -448,7 +477,7 @@ const inprogress = allComplaints.filter(c => c.status === 'in progress').length;
                                 <span className="pulse"></span>
                                 <span>In Progress</span>
                               </div>
-                              <span className="complaint-id">#{complaint.complaint_id}</span>
+                              <span className="complaint-id">#{complaint.id}</span>
                             </div>
                           </div>
 
@@ -460,12 +489,21 @@ const inprogress = allComplaints.filter(c => c.status === 'in progress').length;
                                 <p className="location-text">{complaint.location}</p>
                                 <div className="timer-badge">
                                   <span className="material-symbols-outlined">timer</span>
-                                  Started recently
+                                  
                                 </div>
                               </div>
                             </div>
 
-                            <div className="card-actions">
+                            <div className="card-actions" style={{display:"flex"}}>
+                              {hasValidLocation(complaint.location) && (
+                            <button
+                              className="action-btn map"
+                              onClick={() => openInGoogleMaps(complaint.location)}
+                            >
+                            <span className="material-symbols-outlined">map</span>
+                            View on Map
+                          </button>
+                                )}
                               <button 
                                 className="action-btn resolve"
                                 onClick={() => setUploadingComplaint(complaint.id)}
@@ -484,20 +522,30 @@ const inprogress = allComplaints.filter(c => c.status === 'in progress').length;
                             <img src={complaint.image_url} alt="Complaint" />
                             <div className="image-overlay"></div>
                             <div className="image-badges">
-                              <span className="complaint-id-badge">#{complaint.complaint_id}</span>
+                              <span className="complaint-id-badge">#{complaint.id}</span>
                               <span className="status-badge pending">Pending</span>
                             </div>
                           </div>
 
                           <div className="card-content">
                             <h4>{complaint.description}</h4>
+                            {hasValidLocation(complaint.location)&&(
                             <div className="location">
                               <span className="material-symbols-outlined">location_on</span>
                               <span>{complaint.location}</span>
-                            </div>
+                            </div>)}
                             <p className="address">{complaint.address}</p>
 
-                            <div className="card-actions">
+                            <div className="card-actions" style={{display:"flex"}}>
+                                  {hasValidLocation(complaint.location) && (
+  <button
+    className="action-btn map"
+    onClick={() => openInGoogleMaps(complaint.location)}
+  >
+    <span className="material-symbols-outlined">map</span>
+    View on Map
+  </button>
+)}
                               <button 
                                 className="action-btn start"
                                 onClick={() => startTask(complaint.id)}
