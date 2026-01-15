@@ -5,10 +5,41 @@ const WardWorkerHeader = () => {
   const [avatarUrl,setAvatarUrl] = useState("");
   const [name,setName]=useState("");
 const [wardNumber, setWardNumber] = useState("");
+const [showMenu, setShowMenu] = useState(false);
+
+useEffect(() => {
+  const closeMenu = (e) => {
+    if (!e.target.closest(".ward-profile") &&
+        !e.target.closest(".profile-menu")) {
+      setShowMenu(false);
+    }
+  };
+
+  document.addEventListener("click", closeMenu);
+  return () => document.removeEventListener("click", closeMenu);
+}, []);
+
+
+const handleLogout = async () => {
+  const { error } = await supabase.auth.signOut();
+
+  if (error) {
+    alert("Logout failed");
+    console.error(error);
+    return;
+  }
+
+  // Clear any local storage if used
+  localStorage.clear();
+
+  // Redirect to login page
+  window.location.href = "/user/login";
+};
 
 
  const fetchProfile = async () => {
     // 1️⃣ Get logged-in user from Supabase session
+
     const {
       data: { user },
       error: userError,
@@ -42,7 +73,7 @@ const [wardNumber, setWardNumber] = useState("");
 
   return (
     <nav className="ward-header">
-      <div className="ward-header-container">
+      <div className="ward-header-container" style={{width:"100vw"}}>
         <div className="ward-header-content">
           <div className="ward-header-left">
             <div className="ward-logo">
@@ -73,11 +104,24 @@ const [wardNumber, setWardNumber] = useState("");
             <div className="ward-divider"></div>
             
             <div className="ward-profile">
+              {showMenu && (
+  <div className="profile-menu">
+    <button
+      className="profile-menu-item logout"
+      onClick={handleLogout}
+    >
+      <span className="material-symbols-outlined">logout</span>
+      Logout
+    </button>
+  </div>
+)}
+
               <div className="profile-info">
                 <p className="profile-name">{name|| ""}</p>
                 <p className="profile-ward">Ward {wardNumber}</p>
               </div>
               <img 
+              onClick={() => setShowMenu(!showMenu)}
                  src={avatarUrl || "https://rdxbrzfvjahdkzmpqwuc.supabase.co/storage/v1/object/public/WasteLocationBucket/default.jpg"}
                 alt="Profile"
                 className="ward-profile-avatar"

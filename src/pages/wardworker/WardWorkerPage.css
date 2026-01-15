@@ -232,6 +232,48 @@
   padding-bottom: 2rem;
 }
 
+.profile-menu {
+  position: absolute;
+  top: 70px;
+  right: 20px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 12px 25px rgba(0,0,0,0.15);
+  min-width: 160px;
+  padding: 0.5rem 0;
+  z-index: 100;
+}
+
+.profile-menu-item {
+  width: 100%;
+  padding: 0.6rem 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  background: transparent;
+  border: none;
+  font-size: 0.9rem;
+  cursor: pointer;
+  color: #111827;
+  transition: background 0.2s;
+}
+
+.profile-menu-item:hover {
+  background: #f3f4f6;
+}
+
+.profile-menu-item.logout {
+  color: #dc2626;
+}
+
+.profile-menu-item.logout:hover {
+  background: #fee2e2;
+}
+
+.profile-menu-item .material-symbols-outlined {
+  font-size: 1.1rem;
+}
+
 .complaint-card {
   background: white;
   border-radius: 0.75rem;
