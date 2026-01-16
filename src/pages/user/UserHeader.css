@@ -71,8 +71,9 @@ body{
   color: var(--primary);
 }
 
-.header-actions {
+.header-row .header-actions {
   display: flex;
+  flex-direction: row;
   align-items: center;
   gap: 1rem;
 }
