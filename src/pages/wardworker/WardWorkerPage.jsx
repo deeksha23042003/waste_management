@@ -93,14 +93,19 @@ const openInGoogleMaps = (location) => {
        // Fetch ALL complaints for stats
     const { data: allData } = await supabase
       .from('complaints')
-      .select('*')
+      .select(`*,profiles:email (
+    phone_no
+  )`)
       .eq('ward_number', profile.ward_number);
     
     setAllComplaints(allData || []);
 
       let query = supabase
         .from('complaints')
-        .select('*')
+        .select(`*,
+          profiles:email (
+          phone_no
+          )`)
         .eq('ward_number', profile.ward_number)
         .order('created_at', { ascending: false });
 
@@ -448,7 +453,9 @@ const inprogress = allComplaints.filter(c => c.status === 'in progress').length;
                               <img src={complaint.image_url} alt="Thumbnail" className="thumbnail" />
                               <div className="thumbnail-info">
                                 <h4>{complaint.description}</h4>
-                                <p className="location-text">{complaint.location}</p>
+                                {hasValidLocation(complaint.location) &&
+                                <p className="location-text">{complaint.location}</p>}
+                                <p className='locaation-text'>{complaint.address}</p>
                                 <div className="timer-badge resolving-badge">
                                   <span className="material-symbols-outlined">schedule</span>
                                   Awaiting approval
@@ -488,7 +495,15 @@ const inprogress = allComplaints.filter(c => c.status === 'in progress').length;
                                 <h4>{complaint.description}</h4>
                                 <p className="location-text">{complaint.location}</p>
                                 <div className="timer-badge">
-                                  <span className="material-symbols-outlined">timer</span>
+                                  {complaint.profiles?.phone_no && (
+  <a
+    href={`tel:${complaint.profiles.phone_no}`}
+    className="call-btn"
+  >
+    <span className="material-symbols-outlined">call</span>
+    Call Citizen
+  </a>
+)}
                                   
                                 </div>
                               </div>
@@ -526,14 +541,24 @@ const inprogress = allComplaints.filter(c => c.status === 'in progress').length;
                               <span className="status-badge pending">Pending</span>
                             </div>
                           </div>
-
+                     
                           <div className="card-content">
-                            <h4>{complaint.description}</h4>
+                            <h4>{complaint.description}<div className='timer-badge'>
+                          {complaint.profiles?.phone_no && (
+  <a
+    href={`tel:${complaint.profiles.phone_no}`}
+    className="call-btn"
+  >
+    <span className="material-symbols-outlined">call</span>
+    Call Citizen
+  </a>
+)}</div></h4>
                             {hasValidLocation(complaint.location)&&(
                             <div className="location">
                               <span className="material-symbols-outlined">location_on</span>
                               <span>{complaint.location}</span>
                             </div>)}
+                                 
                             <p className="address">{complaint.address}</p>
 
                             <div className="card-actions" style={{display:"flex"}}>
@@ -550,10 +575,12 @@ const inprogress = allComplaints.filter(c => c.status === 'in progress').length;
                                 className="action-btn start"
                                 onClick={() => startTask(complaint.id)}
                               >
+                                
                                 <span className="material-symbols-outlined">play_arrow</span>
                                 Start Task
                               </button>
                             </div>
+                            
                           </div>
                         </>
                       )}
