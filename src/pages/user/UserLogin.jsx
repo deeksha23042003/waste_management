@@ -7,7 +7,7 @@ const UserLogin = () => {
   const [wards, setWards] = useState([]);
 
    const navigate=useNavigate();
-  const [isRegister, setIsRegister] = useState(true);
+  const [isRegister, setIsRegister] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
