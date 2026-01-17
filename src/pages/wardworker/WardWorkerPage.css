@@ -44,21 +44,21 @@
   overflow: hidden;
 }
 
-.page-header {
+.ward-worker-main .page-header {
   background: white;
   border-bottom: 1px solid #e5e7eb;
   padding: 1.25rem 1.5rem;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
-.page-header > div:first-child h2 {
+.ward-worker-main .page-header > div:first-child h2 {
   font-size: 1.25rem;
   font-weight: 700;
   color: #0f172a;
   margin-bottom: 0.25rem;
 }
 
-.page-header > div:first-child p {
+.ward-worker-main .page-header > div:first-child p {
   font-size: 0.75rem;
   color: #64748b;
 }
@@ -886,7 +886,7 @@
 }
 
 @media (max-width: 640px) {
-  .page-header {
+  .ward-worker-main .page-header {
     padding: 1rem;
   }
 

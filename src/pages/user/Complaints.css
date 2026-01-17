@@ -16,7 +16,7 @@
 /* ===============================
    Page Header
 ================================ */
-.page-header {
+.complaints-page .page-header {
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
