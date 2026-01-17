@@ -387,3 +387,88 @@
 .page-header .header-content{
 margin: 0px;
 }
+.simple-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: 0.3s;
+  z-index: 50;
+}
+
+.simple-modal-content {
+  background: #fff;
+  width: 90%;
+  max-width: 800px;
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-header button {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.modal-images {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin: 16px 0;
+}
+
+.image-box {
+  text-align: center;
+}
+
+.image-label {
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.image-box img {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.no-image {
+  height: 220px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f3f4f6;
+  color: #6b7280;
+  border-radius: 8px;
+}
+
+.modal-footer {
+  font-size: 0.9rem;
+  color: #374151;
+}
+/* Resolving Status Badge */
+.status-resolving {
+  background: rgba(245, 158, 11, 0.9); /* amber */
+  color: #fff;
+
+}
+
+.status-resolving .material-symbols-outlined {
+  font-size: 14px;
+}
+
+
+
+
+

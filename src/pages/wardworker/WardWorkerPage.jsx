@@ -182,7 +182,7 @@ const openInGoogleMaps = (location) => {
         .insert({
           complaint_id: complaint.id,
           resolved_image: publicUrl,
-          email: user.email
+          resolver_email: user.email
         });
 
       if (insertError) throw insertError;
