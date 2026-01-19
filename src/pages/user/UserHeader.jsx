@@ -58,10 +58,7 @@ const UserHeader = ({ active = "home" }) => {
 
           {/* Actions */}
           <div className="header-actions">
-            <button className="notification-btn">
-              <span className="material-symbols-outlined">notifications</span>
-              <span className="notification-badge"></span>
-            </button>
+         
 
             {/* Avatar + Dropdown */}
             <div className="profile-wrapper">

@@ -86,16 +86,11 @@ const handleLogout = async () => {
           </div>
 
           <div className="ward-nav-center">
-            <a href="#" className="ward-nav-link active">
+            {/* <a href="#" className="ward-nav-link active">
               Complaints
-            </a>
-            <a href="#" className="ward-nav-link">
-              History
-            </a>
-            <a href="#" className="ward-nav-link ward-nav-notifications">
-              Notifications
-              <span className="notification-dot"></span>
-            </a>
+            </a> */}
+          
+          
           </div>
 
           <div className="ward-header-right">
