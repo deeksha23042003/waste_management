@@ -12,6 +12,7 @@ import ResetPassword from "./pages/ResetPassword";
   import Complaints from "./pages/user/Complaints";
 import ErrorPage from "./pages/ErrorPage";
 import WardWorkerPage from "./pages/wardworker/WardWorkerPage";
+import VerifyResolutionPage from "./pages/admin/VerifyResolutionPage";
 function App() {
   return (
     <Router>
@@ -27,6 +28,7 @@ function App() {
         <Route path="/user/complaints" element={<Complaints />} />
         <Route path="/wardworker/dashboard" element={<WardWorkerPage />} />
         <Route path="*" element={<ErrorPage />} />
+        <Route path="/admin/verify-resolution" element={<VerifyResolutionPage />} />
       </Routes>
     </Router>
   );

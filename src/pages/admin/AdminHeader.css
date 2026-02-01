@@ -1,0 +1,97 @@
+/* Header Styles */
+.vrp-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  white-space: nowrap;
+  border-bottom: 1px solid #e2e8f0;
+  background-color: #ffffff;
+  padding: 1rem 2rem;
+  z-index: 10;
+  flex-shrink: 0;
+  position: sticky;
+  top: 0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  width: 100vw;
+}
+
+.vrp-header-left {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  color: #0f172a;
+}
+
+.vrp-logo {
+  width: 2rem;
+  height: 2rem;
+  background-color: var(--vrp-primary);
+  border-radius: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #000000;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.vrp-logo-icon {
+  font-weight: 700;
+}
+
+.vrp-header-title {
+  color: #0f172a;
+  font-size: 1.125rem;
+  font-weight: 700;
+  line-height: 1.75rem;
+  letter-spacing: -0.015em;
+  margin: 0;
+}
+
+.vrp-header-right {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.vrp-badge {
+  padding: 0.25rem 0.75rem;
+  background-color: rgba(13, 242, 13, 0.1);
+  color: #15803d;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  border-radius: 9999px;
+  border: 1px solid rgba(13, 242, 13, 0.2);
+}
+
+.vrp-divider {
+  height: 2rem;
+  width: 1px;
+  background-color: #e2e8f0;
+}
+
+.vrp-divider--vertical {
+  display: none;
+  height: 2.5rem;
+  width: 1px;
+  background-color: #e2e8f0;
+}
+
+@media (min-width: 640px) {
+  .vrp-divider--vertical {
+    display: block;
+  }
+}
+
+.vrp-avatar {
+  background-position: center;
+  background-repeat: no-repeat;
+  aspect-ratio: 1;
+  background-size: cover;
+  border-radius: 9999px;
+  width: 2.25rem;
+  height: 2.25rem;
+  border: 2px solid #f1f5f9;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAjTC5Lb6pcs1j285JrYhEOIkZ4OY4DrC3iHNyWf5LlmQZ0mpyO0wt2O1_g5Bn1c8-BVBwmw6cWZ1NNnmQ8_AYmqnNsVFcmi4iX5927JLsKAcFnmUtXoS7ANaaMuZsvZgcLplBvYQobaOgcS-sRo4dtLC_rIsls9fZAs0K7rc4r6hyR3YWBLrSDEiy5UYEQ6OWSq3TGfXq7Z48R3SEXGLID9rYTzIxcGRO4GdoOeA3cs5N637daIbyVwUua8zzjK1wx4YTXh1ckUREw");
+}

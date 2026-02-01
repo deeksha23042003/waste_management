@@ -42,14 +42,11 @@ await minDelay;
       } else if (profile.user_type === "worker") {
         navigate("/wardworker/dashboard");
       } else if (profile.user_type === "admin") {
-        // navigate("/admin/dashboard");
-        alert("Admin access is not available yet.");
-        navigate("/user/login");
+         navigate("/admin/verify-resolution");
       } else {
         navigate("/user/login");
       }
     };
-
     boot();
   }, [navigate]);
 

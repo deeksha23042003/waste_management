@@ -169,8 +169,8 @@ const { data: profile, error: profileError } = await supabase
           return;
         }
         else if (profile[0].user_type==='admin'){
-          alert('Login successful! You are an admin.Admin dashboard coming soon.');
-          return;
+          navigate('/admin/verify-resolution');
+     
         }
         else if(profile[0].user_type==='citizen'){
           
