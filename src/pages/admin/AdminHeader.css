@@ -95,3 +95,43 @@
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
   background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAjTC5Lb6pcs1j285JrYhEOIkZ4OY4DrC3iHNyWf5LlmQZ0mpyO0wt2O1_g5Bn1c8-BVBwmw6cWZ1NNnmQ8_AYmqnNsVFcmi4iX5927JLsKAcFnmUtXoS7ANaaMuZsvZgcLplBvYQobaOgcS-sRo4dtLC_rIsls9fZAs0K7rc4r6hyR3YWBLrSDEiy5UYEQ6OWSq3TGfXq7Z48R3SEXGLID9rYTzIxcGRO4GdoOeA3cs5N637daIbyVwUua8zzjK1wx4YTXh1ckUREw");
 }
+.vrp-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-weight: bold;
+  user-select: none;
+}
+
+.vrp-avatar-menu {
+  position: absolute;
+  top: 60px;
+  right: 0;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  padding: 10px;
+  z-index: 100;
+  min-width: 120px;
+}
+
+.vrp-avatar-menu button {
+  width: 100%;
+  padding: 8px 12px;
+  border: none;
+  background: #d32f2f;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.vrp-avatar-menu button:hover {
+  background: #b71c1c;
+}

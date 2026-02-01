@@ -1,10 +1,12 @@
 import React from 'react'
 import './AdminHeader.css'
-import { useEffect } from 'react'
+import { useEffect,useState,useRef } from 'react'
 import { supabase } from '../../supabase';
 import { useNavigate } from 'react-router-dom';
 const AdminHeader = () => {
     const navigate=useNavigate();
+     const [showMenu, setShowMenu] = useState(false);
+  const menuRef = useRef(null);
   useEffect(() => {
   const checkAdminAccess = async () => {
     try {
@@ -29,7 +31,21 @@ const AdminHeader = () => {
 
   checkAdminAccess();
 }, [navigate]);
+ // close popup when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (menuRef.current && !menuRef.current.contains(e.target)) {
+        setShowMenu(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    navigate("/user/login");
+  };
   return (
    <header className="vrp-header">
         <div className="vrp-header-left">
@@ -41,7 +57,12 @@ const AdminHeader = () => {
         <div className="vrp-header-right">
           <span className="vrp-badge">Admin Verification Mode</span>
           <div className="vrp-divider"></div>
-          <div className="vrp-avatar"></div>
+          <div className="vrp-avatar" onClick={()=>{setShowMenu(!showMenu)}}></div>
+          {showMenu && (
+          <div className="vrp-avatar-menu">
+            <button onClick={handleLogout}>Logout</button>
+          </div>
+        )}
         </div>
       </header>
   )
