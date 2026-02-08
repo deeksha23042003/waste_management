@@ -5,46 +5,148 @@
   justify-content: space-between;
   white-space: nowrap;
   border-bottom: 1px solid #e2e8f0;
-  background-color: #ffffff;
+  background: linear-gradient(to bottom, #ffffff, #fafafa);
   padding: 1rem 2rem;
-  z-index: 10;
+  z-index: 1000;
   flex-shrink: 0;
   position: sticky;
   top: 0;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   width: 100vw;
 }
 
 .vrp-header-left {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 1.5rem;
   color: #0f172a;
 }
 
 .vrp-logo {
-  width: 2rem;
-  height: 2rem;
-  background-color: var(--vrp-primary);
-  border-radius: 0.5rem;
+  width: 2.5rem;
+  height: 2.5rem;
+  background: linear-gradient(135deg, #10b981, #059669);
+  border-radius: 0.75rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #000000;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+  transition: transform 0.2s ease;
+}
+
+.vrp-logo:hover {
+  transform: scale(1.05);
 }
 
 .vrp-logo-icon {
   font-weight: 700;
+  font-size: 1.5rem;
 }
 
 .vrp-header-title {
   color: #0f172a;
-  font-size: 1.125rem;
+  font-size: 1.25rem;
   font-weight: 700;
   line-height: 1.75rem;
-  letter-spacing: -0.015em;
+  letter-spacing: -0.025em;
   margin: 0;
+  background: linear-gradient(135deg, #0f172a, #334155);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Navigation Links */
+.vrp-nav-links {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin-left: 2rem;
+  padding-left: 2rem;
+  border-left: 2px solid #e2e8f0;
+}
+
+.vrp-nav-link {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1.25rem;
+  color: #64748b;
+  text-decoration: none;
+  font-size: 0.875rem;
+  font-weight: 600;
+  border-radius: 0.75rem;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.vrp-nav-link::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #10b981, #059669);
+  transition: width 0.3s ease;
+}
+
+.vrp-nav-link:hover {
+  color: #10b981;
+  background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.15);
+}
+
+.vrp-nav-link:hover::before {
+  width: 80%;
+}
+
+.vrp-nav-link:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 6px rgba(16, 185, 129, 0.1);
+}
+
+.vrp-nav-link .material-symbols-outlined {
+  font-size: 1.25rem;
+  transition: transform 0.2s ease;
+}
+
+.vrp-nav-link:hover .material-symbols-outlined {
+  transform: scale(1.1);
+}
+
+/* Active link state (you can add this class via JavaScript based on current route) */
+.vrp-nav-link.active {
+  color: #10b981;
+  background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+  font-weight: 700;
+}
+
+.vrp-nav-link.active::before {
+  width: 80%;
+}
+
+/* Hide nav links on small screens */
+@media (max-width: 1200px) {
+  .vrp-nav-links {
+    margin-left: 1rem;
+    padding-left: 1rem;
+    gap: 0.125rem;
+  }
+  
+  .vrp-nav-link {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.8125rem;
+  }
+}
+
+@media (max-width: 1024px) {
+  .vrp-nav-links {
+    display: none;
+  }
 }
 
 .vrp-header-right {
@@ -53,28 +155,47 @@
   gap: 1rem;
 }
 
+.vrp-avatar-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  z-index: 1001;
+}
+
 .vrp-badge {
-  padding: 0.25rem 0.75rem;
-  background-color: rgba(13, 242, 13, 0.1);
+  padding: 0.375rem 1rem;
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(5, 150, 105, 0.15));
   color: #15803d;
   font-size: 0.75rem;
   font-weight: 700;
   text-transform: uppercase;
+  letter-spacing: 0.05em;
   border-radius: 9999px;
-  border: 1px solid rgba(13, 242, 13, 0.2);
+  border: 1.5px solid rgba(16, 185, 129, 0.3);
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.1);
+  animation: pulse-glow 3s ease-in-out infinite;
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.1);
+  }
+  50% {
+    box-shadow: 0 2px 12px rgba(16, 185, 129, 0.25);
+  }
 }
 
 .vrp-divider {
   height: 2rem;
   width: 1px;
-  background-color: #e2e8f0;
+  background: linear-gradient(to bottom, transparent, #e2e8f0, transparent);
 }
 
 .vrp-divider--vertical {
   display: none;
   height: 2.5rem;
   width: 1px;
-  background-color: #e2e8f0;
+  background: linear-gradient(to bottom, transparent, #e2e8f0, transparent);
 }
 
 @media (min-width: 640px) {
@@ -89,17 +210,11 @@
   aspect-ratio: 1;
   background-size: cover;
   border-radius: 9999px;
-  width: 2.25rem;
-  height: 2.25rem;
-  border: 2px solid #f1f5f9;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  width: 2.5rem;
+  height: 2.5rem;
+  border: 3px solid #10b981;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
   background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAjTC5Lb6pcs1j285JrYhEOIkZ4OY4DrC3iHNyWf5LlmQZ0mpyO0wt2O1_g5Bn1c8-BVBwmw6cWZ1NNnmQ8_AYmqnNsVFcmi4iX5927JLsKAcFnmUtXoS7ANaaMuZsvZgcLplBvYQobaOgcS-sRo4dtLC_rIsls9fZAs0K7rc4r6hyR3YWBLrSDEiy5UYEQ6OWSq3TGfXq7Z48R3SEXGLID9rYTzIxcGRO4GdoOeA3cs5N637daIbyVwUua8zzjK1wx4YTXh1ckUREw");
-}
-.vrp-avatar {
-  width: 38px;
-  height: 38px;
-  border-radius: 50%;
-
   color: white;
   display: flex;
   align-items: center;
@@ -107,31 +222,133 @@
   cursor: pointer;
   font-weight: bold;
   user-select: none;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.vrp-avatar::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 0.75rem;
+  height: 0.75rem;
+  background: linear-gradient(135deg, #10b981, #059669);
+  border: 2px solid white;
+  border-radius: 50%;
+  animation: pulse-online 2s ease-in-out infinite;
+}
+
+@keyframes pulse-online {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.8;
+  }
+}
+
+.vrp-avatar:hover {
+  transform: scale(1.05) translateY(-2px);
+  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+  border-color: #059669;
+}
+
+.vrp-avatar:active {
+  transform: scale(0.98);
 }
 
 .vrp-avatar-menu {
   position: absolute;
-  top: 60px;
+  top: calc(100% + 10px);
   right: 0;
   background: white;
-  border-radius: 8px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-  padding: 10px;
-  z-index: 100;
-  min-width: 120px;
+  border-radius: 12px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(0, 0, 0, 0.05);
+  padding: 0.5rem;
+  z-index: 9999;
+  min-width: 140px;
+  animation: slideDown 0.2s ease;
+  display: block;
+  visibility: visible;
+  opacity: 1;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .vrp-avatar-menu button {
   width: 100%;
-  padding: 8px 12px;
+  padding: 0.625rem 1rem;
   border: none;
-  background: #d32f2f;
+  background: linear-gradient(135deg, #dc2626, #b91c1c);
   color: white;
-  border-radius: 6px;
+  border-radius: 8px;
   cursor: pointer;
-  font-size: 14px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  box-shadow: 0 2px 8px rgba(220, 38, 38, 0.25);
 }
 
 .vrp-avatar-menu button:hover {
-  background: #b71c1c;
+  background: linear-gradient(135deg, #b91c1c, #991b1b);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.35);
+}
+
+.vrp-avatar-menu button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 6px rgba(220, 38, 38, 0.25);
+}
+
+.vrp-avatar-menu button::before {
+  content: '🚪';
+  font-size: 1rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .vrp-header {
+    padding: 0.875rem 1rem;
+  }
+  
+  .vrp-header-left {
+    gap: 1rem;
+  }
+  
+  .vrp-logo {
+    width: 2rem;
+    height: 2rem;
+  }
+  
+  .vrp-logo-icon {
+    font-size: 1.25rem;
+  }
+  
+  .vrp-header-title {
+    font-size: 1rem;
+  }
+  
+  .vrp-badge {
+    display: none;
+  }
+  
+  .vrp-divider {
+    display: none;
+  }
 }
