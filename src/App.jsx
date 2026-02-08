@@ -14,6 +14,7 @@ import ErrorPage from "./pages/ErrorPage";
 import WardWorkerPage from "./pages/wardworker/WardWorkerPage";
 import VerifyResolutionPage from "./pages/admin/VerifyResolutionPage";
 import ComplaintsPage from "./pages/admin/ComplaintsPage";
+import RequestsPage from "./pages/admin/RequestsPage";
 function App() {
   return (
     <Router>
@@ -31,6 +32,7 @@ function App() {
         <Route path="*" element={<ErrorPage />} />
         <Route path="/admin/verify-resolution" element={<VerifyResolutionPage />} />
         <Route path="/admin/complaints" element={<ComplaintsPage />} />
+        <Route path="/admin/feedback" element={<RequestsPage />} />
       </Routes>
     </Router>
   );
