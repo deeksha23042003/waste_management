@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import AdminHeader from './AdminHeader';
 import { supabase } from '../../supabase';
-import './requestsPage.css';
+import './RequestsPage.css';
 
 const RequestsPage = () => {
   const [feedbackList, setFeedbackList] = useState([]);
