@@ -26,33 +26,60 @@ const WardWorkerPage = () => {
   }, [profile, filter]);
 
   // Check if location has valid lat & lng
-const hasValidLocation = (location) => {
-  if (!location || typeof location !== "string") return false;
+  const hasValidLocation = (location) => {
+    if (!location || typeof location !== "string") return false;
 
-  const parts = location.trim().split(",");
+    const parts = location.trim().split(",");
 
-  if (parts.length !== 2) return false;
+    if (parts.length !== 2) return false;
 
-  const lat = parseFloat(parts[0].trim());
-  const lng = parseFloat(parts[1].trim());
+    const lat = parseFloat(parts[0].trim());
+    const lng = parseFloat(parts[1].trim());
 
-  return (
-    !isNaN(lat) &&
-    !isNaN(lng) &&
-    lat !== 0 &&
-    lng !== 0
-  );
-};
+    return (
+      !isNaN(lat) &&
+      !isNaN(lng) &&
+      lat !== 0 &&
+      lng !== 0
+    );
+  };
 
-// Open Google Maps
-const openInGoogleMaps = (location) => {
-  const [lat, lng] = location.split(",").map(v => v.trim());
-  window.open(
-    `https://www.google.com/maps?q=${lat},${lng}`,
-    "_blank"
-  );
-};
+  // Open Google Maps
+  const openInGoogleMaps = (location) => {
+    const [lat, lng] = location.split(",").map(v => v.trim());
+    window.open(
+      `https://www.google.com/maps?q=${lat},${lng}`,
+      "_blank"
+    );
+  };
 
+  // Add notification function - delete existing then insert new
+  const addNotification = async (email, complaintId, message) => {
+    try {
+      // First delete existing notification for this email and complaint_id
+      await supabase
+        .from('notifications')
+        .delete()
+        .eq('email', email)
+        .eq('complaint_id', complaintId);
+
+      // Then insert new notification
+      const { error } = await supabase
+        .from('notifications')
+        .insert({
+          email: email,
+          complaint_id: complaintId,
+          message: message,
+          readstatus: 'unread'
+        });
+
+      if (error) {
+        console.error('Error adding notification:', error);
+      }
+    } catch (error) {
+      console.error('Error in addNotification:', error);
+    }
+  };
 
   const checkUser = async () => {
     try {
@@ -90,21 +117,21 @@ const openInGoogleMaps = (location) => {
     try {
       setLoading(true);
 
-       // Fetch ALL complaints for stats
-    const { data: allData } = await supabase
-      .from('complaints')
-      .select(`*,profiles:email (
-    phone_no
-  )`)
-      .eq('ward_number', profile.ward_number);
-    
-    setAllComplaints(allData || []);
+      // Fetch ALL complaints for stats
+      const { data: allData } = await supabase
+        .from('complaints')
+        .select(`*,profiles:email (
+          phone_no
+        )`)
+        .eq('ward_number', profile.ward_number);
+      
+      setAllComplaints(allData || []);
 
       let query = supabase
         .from('complaints')
         .select(`*,
           profiles:email (
-          phone_no
+            phone_no
           )`)
         .eq('ward_number', profile.ward_number)
         .order('created_at', { ascending: false });
@@ -133,12 +160,27 @@ const openInGoogleMaps = (location) => {
 
   const startTask = async (complaintId) => {
     try {
+      // Get complaint details first
+      const complaint = complaints.find(c => c.id === complaintId);
+      if (!complaint) {
+        alert('Complaint not found');
+        return;
+      }
+
       const { error } = await supabase
         .from('complaints')
         .update({ status: 'in progress' })
         .eq('id', complaintId);
 
       if (error) throw error;
+
+      // Add notification for the citizen
+      await addNotification(
+        complaint.email,
+        complaint.id,
+        `Your complaint #${complaint.id} is now in progress. Our team is working on it.`
+      );
+
       fetchComplaints();
     } catch (error) {
       console.error('Error starting task:', error);
@@ -194,6 +236,13 @@ const openInGoogleMaps = (location) => {
 
       if (updateError) throw updateError;
 
+      // Add notification for the citizen
+      await addNotification(
+        complaint.email,
+        complaint.id,
+        `Your complaint #${complaint.id} has been resolved and is awaiting admin verification.`
+      );
+
       setUploadingComplaint(null);
       setProofImage(null);
       setRemarks('');
@@ -211,9 +260,9 @@ const openInGoogleMaps = (location) => {
     const assigned = allComplaints.length;
     const pending = allComplaints.filter(c => c.status === 'pending').length;
     const resolved = allComplaints.filter(c => c.status === 'resolved').length;
-   const resolving = allComplaints.filter(c => c.status === 'resolving').length;
-const inprogress = allComplaints.filter(c => c.status === 'in progress').length;
-    return { assigned, pending, resolved,resolving,inprogress};
+    const resolving = allComplaints.filter(c => c.status === 'resolving').length;
+    const inprogress = allComplaints.filter(c => c.status === 'in progress').length;
+    return { assigned, pending, resolved, resolving, inprogress };
   };
 
   const stats = getStats();
@@ -276,15 +325,16 @@ const inprogress = allComplaints.filter(c => c.status === 'in progress').length;
                 <span className="material-symbols-outlined">autorenew</span>
               </div>
             </div>
-<div className="stat-card">
-  <div>
-    <p className="stat-label">Resolving</p>
-    <p className="stat-value" style={{color: '#f59e0b'}}>{stats.resolving}</p>
-  </div>
-  <div className="stat-icon" style={{background: '#fef3c7', color: '#f59e0b'}}>
-    <span className="material-symbols-outlined">pending_actions</span>
-  </div>
-</div>
+
+            <div className="stat-card">
+              <div>
+                <p className="stat-label">Resolving</p>
+                <p className="stat-value" style={{color: '#f59e0b'}}>{stats.resolving}</p>
+              </div>
+              <div className="stat-icon" style={{background: '#fef3c7', color: '#f59e0b'}}>
+                <span className="material-symbols-outlined">pending_actions</span>
+              </div>
+            </div>
 
             <div className="stat-card">
               <div>
@@ -455,7 +505,7 @@ const inprogress = allComplaints.filter(c => c.status === 'in progress').length;
                                 <h4>{complaint.description}</h4>
                                 {hasValidLocation(complaint.location) &&
                                 <p className="location-text">{complaint.location}</p>}
-                                <p className='locaation-text'>{complaint.address}</p>
+                                <p className='location-text'>{complaint.address}</p>
                                 <div className="timer-badge resolving-badge">
                                   <span className="material-symbols-outlined">schedule</span>
                                   Awaiting approval
@@ -496,29 +546,28 @@ const inprogress = allComplaints.filter(c => c.status === 'in progress').length;
                                 <p className="location-text">{complaint.location}</p>
                                 <div className="timer-badge">
                                   {complaint.profiles?.phone_no && (
-  <a
-    href={`tel:${complaint.profiles.phone_no}`}
-    className="call-btn"
-  >
-    <span className="material-symbols-outlined">call</span>
-    Call Citizen
-  </a>
-)}
-                                  
+                                    <a
+                                      href={`tel:${complaint.profiles.phone_no}`}
+                                      className="call-btn"
+                                    >
+                                      <span className="material-symbols-outlined">call</span>
+                                      Call Citizen
+                                    </a>
+                                  )}
                                 </div>
                               </div>
                             </div>
 
                             <div className="card-actions" style={{display:"flex"}}>
                               {hasValidLocation(complaint.location) && (
-                            <button
-                              className="action-btn map"
-                              onClick={() => openInGoogleMaps(complaint.location)}
-                            >
-                            <span className="material-symbols-outlined">map</span>
-                            View on Map
-                          </button>
-                                )}
+                                <button
+                                  className="action-btn map"
+                                  onClick={() => openInGoogleMaps(complaint.location)}
+                                >
+                                  <span className="material-symbols-outlined">map</span>
+                                  View on Map
+                                </button>
+                              )}
                               <button 
                                 className="action-btn resolve"
                                 onClick={() => setUploadingComplaint(complaint.id)}
@@ -544,43 +593,43 @@ const inprogress = allComplaints.filter(c => c.status === 'in progress').length;
                      
                           <div className="card-content">
                             <h4>{complaint.description}<div className='timer-badge'>
-                          {complaint.profiles?.phone_no && (
-  <a
-    href={`tel:${complaint.profiles.phone_no}`}
-    className="call-btn"
-  >
-    <span className="material-symbols-outlined">call</span>
-    Call Citizen
-  </a>
-)}</div></h4>
-                            {hasValidLocation(complaint.location)&&(
-                            <div className="location">
-                              <span className="material-symbols-outlined">location_on</span>
-                              <span>{complaint.location}</span>
-                            </div>)}
+                              {complaint.profiles?.phone_no && (
+                                <a
+                                  href={`tel:${complaint.profiles.phone_no}`}
+                                  className="call-btn"
+                                >
+                                  <span className="material-symbols-outlined">call</span>
+                                  Call Citizen
+                                </a>
+                              )}
+                            </div></h4>
+                            {hasValidLocation(complaint.location) && (
+                              <div className="location">
+                                <span className="material-symbols-outlined">location_on</span>
+                                <span>{complaint.location}</span>
+                              </div>
+                            )}
                                  
                             <p className="address">{complaint.address}</p>
 
                             <div className="card-actions" style={{display:"flex"}}>
-                                  {hasValidLocation(complaint.location) && (
-  <button
-    className="action-btn map"
-    onClick={() => openInGoogleMaps(complaint.location)}
-  >
-    <span className="material-symbols-outlined">map</span>
-    View on Map
-  </button>
-)}
+                              {hasValidLocation(complaint.location) && (
+                                <button
+                                  className="action-btn map"
+                                  onClick={() => openInGoogleMaps(complaint.location)}
+                                >
+                                  <span className="material-symbols-outlined">map</span>
+                                  View on Map
+                                </button>
+                              )}
                               <button 
                                 className="action-btn start"
                                 onClick={() => startTask(complaint.id)}
                               >
-                                
                                 <span className="material-symbols-outlined">play_arrow</span>
                                 Start Task
                               </button>
                             </div>
-                            
                           </div>
                         </>
                       )}
