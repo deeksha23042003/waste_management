@@ -167,14 +167,7 @@ const Feedback = () => {
               </div>
             </div>
 
-            <div className="faq-card">
-              <h4>Need quick answers?</h4>
-              <p>Check out our frequently asked questions about sorting guidelines.</p>
-              <a href="#" className="faq-link">
-                Visit FAQ Center
-                <span className="material-symbols-outlined">arrow_forward</span>
-              </a>
-            </div>
+         
           </aside>
 
           <div className="feedback-form-section">

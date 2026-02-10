@@ -4,48 +4,53 @@ import './HowItWorks.css';
 import { useNavigate } from 'react-router-dom';
 export default function GreenSortHowItWorks() {
   const navigate = useNavigate();
-    const steps = [
-        {
-            number: 1,
-            icon: 'add_a_photo',
-            title: 'Raise Complaint',
-            description: 'Spot uncollected waste? Take a photo, confirm the GPS location, and submit a brief description via the User Dashboard.',
-            badge: 'User Action',
-            badgeColor: 'badge-green',
-            iconColor: 'icon-green',
-            borderColor: 'border-green'
-        },
-        {
-            number: 2,
-            icon: 'admin_panel_settings',
-            title: 'Assign & Route',
-            description: 'System Admins verify the complaint and assign it to the specific Ward Worker responsible for that area.',
-            badge: 'Admin Action',
-            badgeColor: 'badge-gray',
-            iconColor: 'icon-gray',
-            borderColor: 'border-gray'
-        },
-        {
-            number: 3,
-            icon: 'cleaning_services',
-            title: 'Cleanup & Resolve',
-            description: 'Ward Workers receive the alert, clean the site, and upload an "After" photo as proof of resolution.',
-            badge: 'Worker Action',
-            badgeColor: 'badge-gray',
-            iconColor: 'icon-gray',
-            borderColor: 'border-gray'
-        },
-        {
-            number: 4,
-            icon: 'verified',
-            title: 'Verification',
-            description: 'You receive a notification with the proof. The complaint is marked \'Resolved\' and you earn community points!',
-            badge: 'Notification',
-            badgeColor: 'badge-green',
-            iconColor: 'icon-gray',
-            borderColor: 'border-gray'
-        }
-    ];
+   const steps = [
+  {
+    number: 1,
+    icon: "add_a_photo",
+    title: "Report Garbage",
+    description:
+      "The user spots uncollected waste, captures a photo, confirms the GPS location, and submits the complaint through the User Dashboard.",
+    badge: "User Action",
+    badgeColor: "badge-green",
+    iconColor: "icon-green",
+    borderColor: "border-green",
+  },
+  {
+    number: 2,
+    icon: "assignment",
+    title: "Mark In Progress",
+    description:
+      "The assigned ward worker reviews the complaint and marks it as 'In Progress' while heading to the reported location for cleanup.",
+    badge: "Ward Worker Action",
+    badgeColor: "badge-blue",
+    iconColor: "icon-blue",
+    borderColor: "border-blue",
+  },
+  {
+    number: 3,
+    icon: "cleaning_services",
+    title: "Clean & Upload Proof",
+    description:
+      "After cleaning the area, the ward worker uploads an 'After' photo as evidence and marks the complaint as 'Resolving'.",
+    badge: "Ward Worker Action",
+    badgeColor: "badge-blue",
+    iconColor: "icon-blue",
+    borderColor: "border-blue",
+  },
+  {
+    number: 4,
+    icon: "verified",
+    title: "Admin Verification",
+    description:
+      "The admin verifies the uploaded photo to ensure the area is properly cleaned and marks the complaint as 'Resolved'.",
+    badge: "Admin Action",
+    badgeColor: "badge-gray",
+    iconColor: "icon-gray",
+    borderColor: "border-gray",
+  },
+];
+
 
     const wasteTypes = [
         {
@@ -72,7 +77,7 @@ export default function GreenSortHowItWorks() {
         { icon: 'delete_sweep', title: 'Efficient Collection', highlight: true },
         { icon: 'share_location', title: 'GPS Tracking', highlight: false },
         { icon: 'nature_people', title: 'Community Care', highlight: false },
-        { icon: 'emoji_events', title: 'Earn Rewards', highlight: true }
+        { icon: 'emoji_events', title: 'Timely Updates', highlight: true }
     ];
 
     return (
@@ -191,7 +196,7 @@ export default function GreenSortHowItWorks() {
                                     <span className="material-symbols-outlined">add_a_photo</span>
                                     Raise Complaint
                                 </button>
-                                <button className="btn btn-secondary">
+                                <button className="btn btn-secondary" onClick={()=>{navigate('/user/profile')}}>
                                     <span className="material-symbols-outlined">person</span>
                                     View Profile
                                 </button>
