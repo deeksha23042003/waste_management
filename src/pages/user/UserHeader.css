@@ -2,15 +2,16 @@
   position: sticky;
   top: 0;
   z-index: 50;
-  width: 100%;
+  width: 100vw;
   background-color: rgba(255, 255, 255, 0.8);
   backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--border-color);
+}
 
+body {
+  overflow-x: hidden;
 }
-body{
-    overflow-x: hidden;
-}
+
 .header-content {
   max-width: 1200px;
   margin: 0 auto;
@@ -23,7 +24,6 @@ body{
   justify-content: space-between;
   height: 4rem;
 }
-
 
 .logo-section {
   display: flex;
@@ -78,23 +78,48 @@ body{
   gap: 1rem;
 }
 
+/* ===== Notification Button ===== */
 .notification-btn {
   position: relative;
   padding: 0.5rem;
   background: none;
   border: none;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-main);
+  transition: all 0.2s ease;
+  border-radius: 0.5rem;
 }
 
+.notification-btn:hover {
+  background: rgba(0, 0, 0, 0.05);
+  color: var(--primary);
+}
+
+.notification-btn .material-symbols-outlined {
+  font-size: 1.5rem;
+}
+
+/* ===== Notification Badge ===== */
 .notification-badge {
   position: absolute;
-  top: 0.375rem;
-  right: 0.375rem;
-  width: 0.5rem;
-  height: 0.5rem;
-  background-color: var(--primary);
-  border-radius: 50%;
+  top: 0.25rem;
+  right: 0.25rem;
+  min-width: 1.125rem;
+  height: 1.125rem;
+  padding: 0 0.25rem;
+  background-color: #e74c3c;
+  color: white;
+  border-radius: 0.625rem;
+  font-size: 0.625rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   border: 2px solid white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .user-avatar {
@@ -104,9 +129,10 @@ body{
   background: linear-gradient(135deg, #667eea, #764ba2);
   border: 2px solid var(--primary);
   cursor: pointer;
+  object-fit: cover;
 }
-/* ===== Profile Dropdown ===== */
 
+/* ===== Profile Dropdown ===== */
 .profile-wrapper {
   position: relative;
 }
