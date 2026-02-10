@@ -13,6 +13,23 @@ const UserNotificationPage = () => {
         fetchNotifications();
     }, []);
 
+    const markAllAsRead = async (userEmail) => {
+        try {
+            const { error } = await supabase
+                .from('notifications')
+                .update({ readstatus: 'read' })
+                .eq('email', userEmail)
+                .eq('type_of_user', 'user')
+                .eq('readstatus', 'unread');
+
+            if (error) {
+                console.error('Error marking notifications as read:', error);
+            }
+        } catch (err) {
+            console.error('Error in markAllAsRead:', err);
+        }
+    };
+
     const fetchNotifications = async () => {
         try {
             setLoading(true);
@@ -38,6 +55,7 @@ const UserNotificationPage = () => {
                     complaint_id,
                     type_of_user,
                     message,
+                    readstatus,
                     complaints (
                         id,
                         image_url,
@@ -56,6 +74,9 @@ const UserNotificationPage = () => {
             if (error) throw error;
 
             setNotifications(data || []);
+
+            // Mark all notifications as read after fetching
+            await markAllAsRead(userEmail);
         } catch (err) {
             console.error('Error fetching notifications:', err);
             setError('Failed to load notifications');
@@ -72,6 +93,11 @@ const UserNotificationPage = () => {
                 icon: '✓'
             },
             'in-progress': {
+                label: 'In Progress',
+                className: 'status-badge-progress',
+                icon: '⟳'
+            },
+            'in progress': {
                 label: 'In Progress',
                 className: 'status-badge-progress',
                 icon: '⟳'
@@ -110,13 +136,13 @@ const UserNotificationPage = () => {
     };
 
     const getStatusBorderClass = (status) => {
-        if (status === 'in-progress') return 'border-progress';
+        if (status === 'in-progress' || status === 'in progress') return 'border-progress';
         if (status === 'rejected') return 'border-rejected';
         return '';
     };
 
     const filteredNotifications = filter === 'unread' 
-        ? notifications.filter(n => !n.read) 
+        ? notifications.filter(n => n.readstatus === 'unread') 
         : notifications;
 
     if (loading) {
