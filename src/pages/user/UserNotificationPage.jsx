@@ -274,28 +274,11 @@ const UserNotificationPage = () => {
                         })
                     )}
 
-                    {filteredNotifications.length > 0 && (
-                        <div className="list-end">
-                            <p>You're all caught up!</p>
-                            <button className="history-btn">View History</button>
-                        </div>
-                    )}
+                  
                 </div>
             </main>
 
-            <footer className="notification-footer">
-                <div className="footer-content">
-                    <span>© 2024 GreenSort Municipal Services</span>
-                    <div className="footer-links">
-                        <a href="#">
-                            <span className="material-icons">help</span>
-                            Support
-                        </a>
-                        <a href="#">Terms</a>
-                        <a href="#">Privacy</a>
-                    </div>
-                </div>
-            </footer>
+           
         </div>
     );
 };

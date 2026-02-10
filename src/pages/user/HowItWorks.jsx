@@ -212,13 +212,9 @@ export default function GreenSortHowItWorks() {
                             <div className="footer-icon">
                                 <span className="material-symbols-outlined">recycling</span>
                             </div>
-                            <span className="footer-text">GreenSort © 2023</span>
+                            <span className="footer-text">GreenSort © 2025</span>
                         </div>
-                        <div className="footer-links">
-                            <a className="footer-link" href="#">Privacy Policy</a>
-                            <a className="footer-link" href="#">Terms of Service</a>
-                            <a className="footer-link" href="#">Support</a>
-                        </div>
+                      
                     </div>
                 </footer>
             </div>
