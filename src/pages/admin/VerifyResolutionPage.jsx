@@ -60,14 +60,56 @@ const VerifyResolutionPage = () => {
     }
   };
 
+  // Add notification function - delete existing then insert new
+  const addNotification = async (email, complaintId, message) => {
+    try {
+      // First delete existing notification for this email and complaint_id
+      await supabase
+        .from('notifications')
+        .delete()
+        .eq('email', email)
+        .eq('complaint_id', complaintId);
+
+      // Then insert new notification
+      const { error } = await supabase
+        .from('notifications')
+        .insert({
+          email: email,
+          complaint_id: complaintId,
+          message: message,
+          readstatus: 'unread'
+        });
+
+      if (error) {
+        console.error('Error adding notification:', error);
+      }
+    } catch (error) {
+      console.error('Error in addNotification:', error);
+    }
+  };
+
   const handleAccept = async (complaintId) => {
     try {
+      // Get complaint details first
+      const complaint = complaints.find(c => c.id === complaintId);
+      if (!complaint) {
+        alert('Complaint not found');
+        return;
+      }
+
       const { error } = await supabase
         .from('complaints')
         .update({ status: 'resolved' })
         .eq('id', complaintId);
 
       if (error) throw error;
+
+      // Send notification to citizen
+      await addNotification(
+        complaint.email,
+        complaint.id,
+        `Great news! Your complaint #${complaint.id} has been successfully resolved and verified by our admin team. Thank you for helping keep our community clean!`
+      );
       
       // Refresh the list
       await fetchResolvingComplaints();
@@ -80,17 +122,32 @@ const VerifyResolutionPage = () => {
 
   const handleReject = async (complaintId) => {
     try {
+      // Get complaint details first
+      const complaint = complaints.find(c => c.id === complaintId);
+      if (!complaint) {
+        alert('Complaint not found');
+        return;
+      }
+
       const { error } = await supabase
         .from('complaints')
         .update({ status: 'pending' })
         .eq('id', complaintId);
 
       if (error) throw error;
-    //let us remove the resolved details as well
+
+      // Delete the resolved details as well
       const { error: resolvedError } = await supabase
         .from('resolved_details')
         .delete()
         .eq('complaint_id', complaintId);
+
+      // Send notification to citizen
+      await addNotification(
+        complaint.email,
+        complaint.id,
+        `Your complaint #${complaint.id} resolution was not verified by our admin team. Our ward worker will re-visit and resolve the issue. We apologize for the inconvenience.`
+      );
       
       // Refresh the list
       await fetchResolvingComplaints();

@@ -266,10 +266,7 @@ const UserNotificationPage = () => {
                                             <p className="verification-text">
                                                 Verified by Admin Agent
                                             </p>
-                                            <button className="helpful-btn">
-                                                <span className="material-icons">thumb_up</span>
-                                                Helpful?
-                                            </button>
+                                            
                                         </div>
                                     )}
                                 </div>
