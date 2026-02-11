@@ -154,14 +154,7 @@ const ComplaintsPage = () => {
                                         {resolvingCount} Resolving Complaint{resolvingCount !== 1 ? 's' : ''} - Proceed to Resolution
                                     </a>
                                 )}
-                                <button 
-                                    className="complaints-theme-toggle"
-                                    onClick={toggleDarkMode}
-                                >
-                                    <span className="material-icons-round">
-                                        {isDark ? 'light_mode' : 'dark_mode'}
-                                    </span>
-                                </button>
+                                
                                
                             </div>
                         </div>
