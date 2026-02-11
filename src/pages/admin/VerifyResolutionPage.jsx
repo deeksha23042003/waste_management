@@ -61,7 +61,7 @@ const VerifyResolutionPage = () => {
   };
 
   // Add notification function - delete existing then insert new
-  const addNotification = async (email, complaintId, message) => {
+  const addNotification = async (email, complaintId, message, typeOfUser = 'citizen') => {
     try {
       // First delete existing notification for this email and complaint_id
       await supabase
@@ -77,7 +77,8 @@ const VerifyResolutionPage = () => {
           email: email,
           complaint_id: complaintId,
           message: message,
-          readstatus: 'unread'
+          readstatus: 'unread',
+          type_of_user: typeOfUser
         });
 
       if (error) {
@@ -97,6 +98,17 @@ const VerifyResolutionPage = () => {
         return;
       }
 
+      // Fetch resolver email from resolved_details table
+      const { data: resolvedData, error: resolvedError } = await supabase
+        .from('resolved_details')
+        .select('resolver_email')
+        .eq('complaint_id', complaintId)
+        .single();
+
+      if (resolvedError) {
+        console.error('Error fetching resolver email:', resolvedError);
+      }
+
       const { error } = await supabase
         .from('complaints')
         .update({ status: 'resolved' })
@@ -108,8 +120,19 @@ const VerifyResolutionPage = () => {
       await addNotification(
         complaint.email,
         complaint.id,
-        `Great news! Your complaint #${complaint.id} has been successfully resolved and verified by our admin team. Thank you for helping keep our community clean!`
+        `Great news! Your complaint #${complaint.id} has been successfully resolved and verified by our admin team. Thank you for helping keep our community clean!`,
+        'citizen'
       );
+
+      // Send notification to worker (resolver)
+      if (resolvedData?.resolver_email) {
+        await addNotification(
+          resolvedData.resolver_email,
+          complaint.id,
+          `Excellent work! Your resolution for complaint #${complaint.id} has been verified and accepted by the admin team. Keep up the great work!`,
+          'worker'
+        );
+      }
       
       // Refresh the list
       await fetchResolvingComplaints();
@@ -129,6 +152,17 @@ const VerifyResolutionPage = () => {
         return;
       }
 
+      // Fetch resolver email from resolved_details table BEFORE deleting
+      const { data: resolvedData, error: resolvedError } = await supabase
+        .from('resolved_details')
+        .select('resolver_email')
+        .eq('complaint_id', complaintId)
+        .single();
+
+      if (resolvedError) {
+        console.error('Error fetching resolver email:', resolvedError);
+      }
+
       const { error } = await supabase
         .from('complaints')
         .update({ status: 'pending' })
@@ -137,17 +171,32 @@ const VerifyResolutionPage = () => {
       if (error) throw error;
 
       // Delete the resolved details as well
-      const { error: resolvedError } = await supabase
+      const { error: deleteError } = await supabase
         .from('resolved_details')
         .delete()
         .eq('complaint_id', complaintId);
+
+      if (deleteError) {
+        console.error('Error deleting resolved details:', deleteError);
+      }
 
       // Send notification to citizen
       await addNotification(
         complaint.email,
         complaint.id,
-        `Your complaint #${complaint.id} resolution was not verified by our admin team. Our ward worker will re-visit and resolve the issue. We apologize for the inconvenience.`
+        `Your complaint #${complaint.id} resolution was not verified by our admin team. Our ward worker will re-visit and resolve the issue. We apologize for the inconvenience.`,
+        'citizen'
       );
+
+      // Send notification to worker (resolver)
+      if (resolvedData?.resolver_email) {
+        await addNotification(
+          resolvedData.resolver_email,
+          complaint.id,
+          `Your resolution for complaint #${complaint.id} was not verified by the admin team. Please re-visit the location and ensure proper cleanup. The complaint has been returned to pending status.`,
+          'worker'
+        );
+      }
       
       // Refresh the list
       await fetchResolvingComplaints();
