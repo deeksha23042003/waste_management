@@ -17,7 +17,7 @@
   border-bottom: 1px solid #f1f5f9;
   font-family: 'Public Sans', sans-serif;
   width: 100vw;
-  margin-top:0px ;
+  margin-top: 0px;
 }
 
 .ward-header-container {
@@ -91,6 +91,7 @@
   }
 }
 
+/* Navigation Center */
 .ward-nav-center {
   display: none;
   align-items: center;
@@ -111,56 +112,111 @@
   font-weight: 500;
   font-size: 0.875rem;
   text-decoration: none;
-  transition: color 0.2s;
+  transition: all 0.2s;
   position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+}
+
+.ward-nav-link .material-symbols-outlined {
+  font-size: 1.25rem;
 }
 
 .ward-nav-link:hover {
   color: #16a34a;
+  background-color: #f0fdf4;
 }
 
 .ward-nav-link.active {
   color: #16a34a;
   font-weight: 700;
+  background-color: #dcfce7;
 }
 
+/* Notification Badge */
 .ward-nav-notifications {
   position: relative;
 }
 
-.notification-dot {
+.notification-badge {
   position: absolute;
-  top: -0.25rem;
-  right: -0.5rem;
+  top: 0.25rem;
+  right: 0.5rem;
   display: inline-flex;
-  height: 0.375rem;
-  width: 0.375rem;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.25rem;
+  height: 1.25rem;
+  padding: 0 0.25rem;
   border-radius: 9999px;
   background-color: #ef4444;
+  color: white;
+  font-size: 0.625rem;
+  font-weight: 700;
+  line-height: 1;
+  box-shadow: 0 0 0 2px white;
+}
+
+/* Mobile Navigation */
+.ward-nav-mobile {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+@media (min-width: 768px) {
+  .ward-nav-mobile {
+    display: none;
+  }
+}
+
+.ward-nav-icon {
+  color: #64748b;
+  text-decoration: none;
+  transition: all 0.2s;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 0.5rem;
+}
+
+.ward-nav-icon .material-symbols-outlined {
+  font-size: 1.5rem;
+}
+
+.ward-nav-icon:hover {
+  color: #16a34a;
+  background-color: #f0fdf4;
+}
+
+.ward-nav-icon.active {
+  color: #16a34a;
+  background-color: #dcfce7;
+}
+
+/* Mobile notification badge positioning */
+.ward-nav-icon.ward-nav-notifications .notification-badge {
+  top: 0;
+  right: 0;
 }
 
 .ward-header-right {
   display: flex;
   align-items: center;
-  gap: 1.25rem;
+  gap: 1rem;
 }
 
-
-
-
-
-
-
-@keyframes ping {
-  75%, 100% {
-    transform: scale(2);
-    opacity: 0;
+@media (min-width: 640px) {
+  .ward-header-right {
+    gap: 1.25rem;
   }
 }
-
-
-
-
 
 .ward-divider {
   height: 2rem;
@@ -179,6 +235,7 @@
   display: flex;
   align-items: center;
   gap: 0.75rem;
+  position: relative;
 }
 
 .profile-info {
@@ -218,4 +275,52 @@
 
 .ward-profile-avatar:hover {
   box-shadow: 0 0 0 2px #22c55e;
+}
+
+/* Profile Menu */
+.profile-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 0.5rem;
+  background: white;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  border: 1px solid #e5e7eb;
+  min-width: 10rem;
+  z-index: 100;
+  overflow: hidden;
+}
+
+.profile-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background: transparent;
+  border: none;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #0f172a;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: left;
+  font-family: 'Public Sans', sans-serif;
+}
+
+.profile-menu-item:hover {
+  background-color: #f9fafb;
+}
+
+.profile-menu-item.logout {
+  color: #dc2626;
+}
+
+.profile-menu-item.logout:hover {
+  background-color: #fef2f2;
+}
+
+.profile-menu-item .material-symbols-outlined {
+  font-size: 1.25rem;
 }
