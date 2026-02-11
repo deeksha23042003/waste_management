@@ -19,7 +19,7 @@ const UserNotificationPage = () => {
                 .from('notifications')
                 .update({ readstatus: 'read' })
                 .eq('email', userEmail)
-                .eq('type_of_user', 'user')
+                .eq('type_of_user', 'citizen')
                 .eq('readstatus', 'unread');
 
             if (error) {
@@ -66,7 +66,7 @@ const UserNotificationPage = () => {
                         description
                     )
                 `)
-                .eq('type_of_user', 'user')
+                .eq('type_of_user', 'citizen')
                 .eq('email', userEmail)
                 .order('created_at', { ascending: false });
                 console.log('Supabase query executed with email:', userEmail);
