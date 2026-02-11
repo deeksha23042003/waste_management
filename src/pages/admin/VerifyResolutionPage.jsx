@@ -210,19 +210,7 @@ const VerifyResolutionPage = () => {
   if (loading) {
     return (
       <div className="vrp-page">
-        <header className="vrp-header">
-          <div className="vrp-header-left">
-            <div className="vrp-logo">
-              <span className="material-symbols-outlined vrp-logo-icon">recycling</span>
-            </div>
-            <h2 className="vrp-header-title">GreenSort Admin</h2>
-          </div>
-          <div className="vrp-header-right">
-            <span className="vrp-badge">Admin Verification Mode</span>
-            <div className="vrp-divider"></div>
-            <div className="vrp-avatar"></div>
-          </div>
-        </header>
+        <AdminHeader />
         <div className="vrp-loading">
           <div className="vrp-loading-spinner"></div>
           <p>Loading complaints...</p>
