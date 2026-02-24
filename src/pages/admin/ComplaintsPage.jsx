@@ -17,7 +17,6 @@ const ComplaintsPage = () => {
 
     useEffect(() => {
         fetchData();
-        // Default to light mode
         const isDarkMode = localStorage.getItem('color-theme') === 'dark';
         setIsDark(isDarkMode);
     }, [selectedWard, selectedStatus, searchTerm]);
@@ -26,7 +25,7 @@ const ComplaintsPage = () => {
         try {
             setLoading(true);
 
-            // Fetch profiles first
+            // Fetch profiles
             const { data: profilesData } = await supabase
                 .from('profiles')
                 .select('*');
@@ -48,13 +47,12 @@ const ComplaintsPage = () => {
             });
             setWards(wardsMap);
 
-            // Build query for complaints
+            // Build complaints query
             let query = supabase
                 .from('complaints')
                 .select('*', { count: 'exact' })
                 .order('created_at', { ascending: false });
 
-            // Apply filters
             if (selectedWard !== 'all') {
                 query = query.eq('ward_number', selectedWard);
             }
@@ -91,22 +89,30 @@ const ComplaintsPage = () => {
     };
 
     const getStatusBadge = (status) => {
+        // Exact match against all 4 known DB values
         const statusClasses = {
-            pending: 'complaints-status-pending',
-            resolving: 'complaints-status-progress',
-            resolved: 'complaints-status-resolved'
+            'pending':     'complaints-status-pending',
+            'in progress': 'complaints-status-inprogress',
+            'resolving':   'complaints-status-progress',
+            'resolved':    'complaints-status-resolved',
         };
         const statusText = {
-            pending: 'Pending',
-            resolving: 'In Progress',
-            resolved: 'Resolved'
+            'pending':     'Pending',
+            'in progress': 'In Progress',
+            'resolving':   'Resolving',
+            'resolved':    'Resolved',
         };
+
+        const key = status?.toLowerCase().trim();
+
         return (
-            <span className={`complaints-status-badge ${statusClasses[status] || statusClasses.pending}`}>
-                {statusText[status] || status}
+            <span className={`complaints-status-badge ${statusClasses[key] || 'complaints-status-pending'}`}>
+                {statusText[key] || status}
             </span>
         );
     };
+
+    const isResolved = (status) => status?.toLowerCase().trim() === 'resolved';
 
     const formatDate = (dateString) => {
         const date = new Date(dateString);
@@ -142,7 +148,6 @@ const ComplaintsPage = () => {
                         <div className="complaints-header-top">
                             <div>
                                 <h1 className="complaints-title">Complaints Master List</h1>
-
                             </div>
                             <div className="complaints-header-actions">
                                 {resolvingCount > 0 && (
@@ -154,8 +159,6 @@ const ComplaintsPage = () => {
                                         {resolvingCount} Resolving Complaint{resolvingCount !== 1 ? 's' : ''} - Proceed to Resolution
                                     </a>
                                 )}
-                                
-                               
                             </div>
                         </div>
 
@@ -194,7 +197,8 @@ const ComplaintsPage = () => {
                                 >
                                     <option value="all">All Statuses</option>
                                     <option value="pending">Pending</option>
-                                    <option value="resolving">In Progress</option>
+                                    <option value="in progress">In Progress</option>
+                                    <option value="resolving">Resolving</option>
                                     <option value="resolved">Resolved</option>
                                 </select>
                             </div>
@@ -214,18 +218,17 @@ const ComplaintsPage = () => {
                     ) : (
                         <div className="complaints-grid">
                             {complaints.map((complaint) => {
-                                const assignee = profiles[complaint.avatar_url];
-                                const isResolved = complaint.status === 'resolved';
+                                const resolved = isResolved(complaint.status);
                                 
                                 return (
                                     <article 
                                         key={complaint.id} 
-                                        className={`complaints-card ${isResolved ? 'complaints-card-resolved' : ''}`}
+                                        className={`complaints-card ${resolved ? 'complaints-card-resolved' : ''}`}
                                     >
                                         <div className="complaints-card-image-wrapper">
                                             <img
                                                 alt={complaint.description}
-                                                className={`complaints-card-image ${isResolved ? 'complaints-card-image-grayscale' : ''}`}
+                                                className={`complaints-card-image ${resolved ? 'complaints-card-image-grayscale' : ''}`}
                                                 src={complaint.image_url || 'https://via.placeholder.com/400x300?text=No+Image'}
                                             />
                                             <div className="complaints-card-badge">
@@ -256,8 +259,6 @@ const ComplaintsPage = () => {
                                             <p className="complaints-card-description">
                                                 {complaint.description || 'No description available'}
                                             </p>
-
-                                           
                                         </div>
                                     </article>
                                 );

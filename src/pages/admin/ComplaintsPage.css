@@ -745,3 +745,14 @@
 .complaints-dark .complaints-content::-webkit-scrollbar-thumb:hover {
     background: #64748B;
 }
+.complaints-status-inprogress {
+    background-color: rgba(219, 234, 254, 0.9);
+    color: #1E40AF;
+    border-color: #93C5FD;
+}
+
+.complaints-dark .complaints-status-inprogress {
+    background-color: rgba(30, 64, 175, 0.5);
+    color: #93C5FD;
+    border-color: #1E40AF;
+}
