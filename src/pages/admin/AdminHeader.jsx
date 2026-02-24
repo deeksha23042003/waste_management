@@ -1,14 +1,15 @@
 import React from 'react'
 import './AdminHeader.css'
-import { useEffect,useState,useRef } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { supabase } from '../../supabase';
 import { useNavigate } from 'react-router-dom';
 
 const AdminHeader = () => {
-    const navigate=useNavigate();
+    const navigate = useNavigate();
     const [showMenu, setShowMenu] = useState(false);
+    const [avatarUrl, setAvatarUrl] = useState(null);
     const menuRef = useRef(null);
-    
+
     useEffect(() => {
         const checkAdminAccess = async () => {
             try {
@@ -18,13 +19,15 @@ const AdminHeader = () => {
 
                 const { data, error } = await supabase
                     .from("profiles")
-                    .select("id")
+                    .select("id, avatar_url")
                     .eq("id", user.id)
                     .eq("user_type", "admin")
                     .single();
 
                 if (error || !data) {
                     navigate("/user/login");
+                } else {
+                    setAvatarUrl(data.avatar_url || null);
                 }
             } catch (err) {
                 navigate("/user/login");
@@ -33,7 +36,7 @@ const AdminHeader = () => {
 
         checkAdminAccess();
     }, [navigate]);
-    
+
     // close popup when clicking outside
     useEffect(() => {
         const handleClickOutside = (e) => {
@@ -49,7 +52,7 @@ const AdminHeader = () => {
         await supabase.auth.signOut();
         navigate("/user/login");
     };
-    
+
     return (
         <header className="vrp-header">
             <div className="vrp-header-left">
@@ -68,7 +71,7 @@ const AdminHeader = () => {
                     </a>
                     <a href="/admin/users" className="vrp-nav-link">
                         <span className="material-symbols-outlined">person</span>
-                       Users
+                        Users
                     </a>
                     <a href="/admin/feedback" className="vrp-nav-link">
                         <span className="material-symbols-outlined">feedback</span>
@@ -80,10 +83,15 @@ const AdminHeader = () => {
                 <span className="vrp-badge">Admin Verification Mode</span>
                 <div className="vrp-divider"></div>
                 <div className="vrp-avatar-wrapper">
-                    <div className="vrp-avatar" onClick={()=>{
-                        console.log('Avatar clicked, showMenu will be:', !showMenu);
-                        setShowMenu(!showMenu);
-                    }}></div>
+                    <div
+                        className="vrp-avatar"
+                        onClick={() => setShowMenu(!showMenu)}
+                        style={avatarUrl ? {
+                            backgroundImage: `url(${avatarUrl})`,
+                            backgroundSize: 'cover',
+                            backgroundPosition: 'center',
+                        } : {}}
+                    />
                     {showMenu && (
                         <div className="vrp-avatar-menu" ref={menuRef}>
                             <button onClick={handleLogout}>Logout</button>
@@ -92,7 +100,7 @@ const AdminHeader = () => {
                 </div>
             </div>
         </header>
-    )
-}
+    );
+};
 
-export default AdminHeader
+export default AdminHeader;

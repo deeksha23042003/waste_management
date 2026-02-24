@@ -34,10 +34,7 @@ const UserNotificationPage = () => {
         try {
             setLoading(true);
             setError(null);
-
-            // Get current user email (you may need to adjust this based on your auth setup)
-            
-            
+            // Get current user email   
             const { data:dat1, error:err1 } = await supabase.auth.getUser();
             const userEmail = dat1.user?.email;
             if (!userEmail) {
