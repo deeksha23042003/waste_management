@@ -72,16 +72,22 @@ const WardWorkerHeader = () => {
 
   const fetchUnreadCount = async (userEmail) => {
     try {
-      const { data, error } = await supabase
+      console.log('Fetching unread count for email:', userEmail);
+      
+      const { count, error } = await supabase
         .from('notifications')
-        .select('id', { count: 'exact', head: true })
+        .select('*', { count: 'exact', head: true })
         .eq('email', userEmail)
         .eq('type_of_user', 'worker')
         .eq('readstatus', 'unread');
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error in fetchUnreadCount query:', error);
+        throw error;
+      }
 
-      setUnreadCount(data || 0);
+      console.log('Unread count fetched:', count);
+      setUnreadCount(count || 0);
     } catch (err) {
       console.error('Error fetching unread count:', err);
     }
@@ -102,6 +108,8 @@ const WardWorkerHeader = () => {
         window.location.href = '/user/login';
         return;
       }
+
+      console.log('Logged in user:', user.email);
 
       // Check if user is a worker
       const isValidWorker = await checkUserType(user.email);
@@ -124,6 +132,8 @@ const WardWorkerHeader = () => {
       setWardNumber(data.ward_number);
       setAvatarUrl(data.avatar_url);
 
+      console.log('Profile data fetched:', data);
+
       // Fetch unread notifications count
       await fetchUnreadCount(user.email);
     } catch (err) {
@@ -136,6 +146,11 @@ const WardWorkerHeader = () => {
   useEffect(() => {
     fetchProfile();
   }, []);
+
+  // Add effect to log unreadCount changes
+  useEffect(() => {
+    console.log('Unread count state updated to:', unreadCount);
+  }, [unreadCount]);
 
   if (loading) {
     return (
