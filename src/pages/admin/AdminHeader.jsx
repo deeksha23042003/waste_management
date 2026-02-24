@@ -66,6 +66,10 @@ const AdminHeader = () => {
                         <span className="material-symbols-outlined">fact_check</span>
                         Verify Resolution
                     </a>
+                    <a href="/admin/users" className="vrp-nav-link">
+                        <span className="material-symbols-outlined">person</span>
+                       Users
+                    </a>
                     <a href="/admin/feedback" className="vrp-nav-link">
                         <span className="material-symbols-outlined">feedback</span>
                         Feedback
