@@ -418,7 +418,7 @@ const { data: profile, error: profileError } = await supabase
                       onChange={handleInputChange}
                     />
                     <span>
-                      I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.
+                      I agree to the <a href="/terms">Terms of Service</a> 
                     </span>
                   </label>
                 </div>

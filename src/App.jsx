@@ -4,7 +4,7 @@ import UserLogin from "./pages/user/UserLogin";
 
 import UserDashboard from "./pages/user/UserDashboard";
 import ResetPassword from "./pages/ResetPassword";
-
+import Terms from "./pages/Terms";
  import HowItWorks from "./pages/user/HowItWorks";
  import UserComplaintPage from "./pages/user/UserComplaintPage";
  import Profile from "./pages/user/Profile";
@@ -39,6 +39,7 @@ function App() {
         <Route path="/admin/complaints" element={<ComplaintsPage />} />
         <Route path="/admin/feedback" element={<RequestsPage />} />
         <Route path="/admin/users" element={<Userstable/>}/>
+        <Route path="/terms" element={<Terms/>}></Route>
 
       </Routes>
     </Router>
