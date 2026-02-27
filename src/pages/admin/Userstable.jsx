@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import AdminHeader from "./AdminHeader";
 import { supabase } from "../../supabase";
-import "./UsersTable.css";
+import "./Userstable.css";
 
 /* ─── helpers ─────────────────────────────────────── */
 const GRAD_COLORS = [
