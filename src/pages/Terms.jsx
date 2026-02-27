@@ -73,7 +73,7 @@ export default function Terms() {
         <h1 className="terms-title">Terms and Conditions</h1>
         <div className="terms-meta">
           <ClockIcon />
-          <span>Last updated: October 24, 2023</span>
+          <span>Last updated: 27-02-2026</span>
         </div>
       </div>
 
