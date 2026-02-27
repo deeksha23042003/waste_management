@@ -32,13 +32,6 @@ const UserDashboard = () => {
               </p>
             </div>
 
-            <div className="weather-widget">
-              <span className="material-symbols-outlined">wb_sunny</span>
-              <div>
-                <p className="weather-label">Today's Forecast</p>
-                <p className="weather-value">Sunny, 24°C</p>
-              </div>
-            </div>
           </section>
 
           {/* Control Center */}
