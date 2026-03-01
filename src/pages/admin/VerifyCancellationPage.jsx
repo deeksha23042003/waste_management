@@ -14,6 +14,12 @@ const VerifyCancellationPage = () => {
   const [rejecting, setRejecting] = useState(false);
   // ────────────────────────────────────────────────────────────────────────────
 
+  // ── Delete modal state ───────────────────────────────────────────────────────
+  const [deletingComplaint, setDeletingComplaint] = useState(null);
+  const [deleteReason, setDeleteReason] = useState('');
+  const [deleting, setDeleting] = useState(false);
+  // ────────────────────────────────────────────────────────────────────────────
+
   useEffect(() => {
     fetchCancellingComplaints();
   }, []);
@@ -79,44 +85,43 @@ const VerifyCancellationPage = () => {
   };
   // ────────────────────────────────────────────────────────────────────────────
 
-  // ── DELETE the complaint ────────────────────────────────────────────────────
-  const handleDelete = async (complaintId) => {
-    const complaint = complaints.find((c) => c.id === complaintId);
+  // ── DELETE the complaint (called from modal) ────────────────────────────────
+  const handleDelete = async () => {
+    if (!deleteReason.trim()) {
+      alert('Please provide a reason for deletion.');
+      return;
+    }
+
+    const complaint = deletingComplaint;
     if (!complaint) return;
 
-    if (!window.confirm(`Are you sure you want to permanently delete complaint #${complaint.id}? This cannot be undone.`)) return;
-
     try {
+      setDeleting(true);
+
       // Delete cancel_details first (FK reference)
-      await supabase.from('cancel_details').delete().eq('complaint_id', complaintId);
+      await supabase.from('cancel_details').delete().eq('complaint_id', complaint.id);
 
       // Delete the complaint itself
-      const { error } = await supabase.from('complaints').delete().eq('id', complaintId);
+      const { error } = await supabase.from('complaints').delete().eq('id', complaint.id);
       if (error) throw error;
 
-      // Notify the citizen
+      // Notify the citizen with the admin's reason
       await addNotification(
         complaint.email,
         complaint.id,
-        `Your complaint #${complaint.id} has been reviewed by our admin team and has been removed as it was deemed invalid. If you believe this is a mistake, please raise a new complaint.`,
+        `Your complaint #${complaint.id} has been reviewed by our admin team and removed. Reason: "${deleteReason.trim()}". If you believe this is a mistake, please raise a new complaint.`,
         'citizen'
       );
 
-      // Notify the ward worker who reported it
-      if (complaint.cancel_details?.ward_worker_email) {
-        await addNotification(
-          complaint.cancel_details.ward_worker_email,
-          complaint.id,
-          `Your report for complaint #${complaint.id} has been accepted by the admin. The complaint has been deleted. Good job keeping the system accurate!`,
-          'worker'
-        );
-      }
-
+      setDeletingComplaint(null);
+      setDeleteReason('');
       await fetchCancellingComplaints();
       alert('Complaint deleted successfully.');
     } catch (err) {
       console.error('Error deleting complaint:', err);
       alert('Failed to delete complaint. Please try again.');
+    } finally {
+      setDeleting(false);
     }
   };
   // ────────────────────────────────────────────────────────────────────────────
@@ -325,7 +330,10 @@ const VerifyCancellationPage = () => {
                     </button>
                     <button
                       className="vcp-button vcp-button--delete"
-                      onClick={() => handleDelete(complaint.id)}
+                      onClick={() => {
+                        setDeletingComplaint(complaint);
+                        setDeleteReason('');
+                      }}
                     >
                       <span className="material-symbols-outlined vcp-button-icon">delete</span>
                       Delete Complaint
@@ -392,6 +400,62 @@ const VerifyCancellationPage = () => {
                   <><span className="vcp-spinner-small"></span> Submitting...</>
                 ) : (
                   <><span className="material-symbols-outlined">send</span> Confirm & Notify</>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* ─────────────────────────────────────────────────────────────────────── */}
+
+      {/* ── Delete Complaint Modal ──────────────────────────────────────────── */}
+      {deletingComplaint && (
+        <div
+          className="vcp-overlay"
+          onClick={() => { setDeletingComplaint(null); setDeleteReason(''); }}
+        >
+          <div className="vcp-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="vcp-modal-header">
+              <div className="vcp-modal-icon vcp-modal-icon--delete">
+                <span className="material-symbols-outlined">delete</span>
+              </div>
+              <h3>Delete Complaint</h3>
+              <p>
+                Complaint <strong>#{deletingComplaint.id}</strong> will be{' '}
+                <strong>permanently deleted</strong>. The citizen will be notified with your reason.
+                This action cannot be undone.
+              </p>
+            </div>
+
+            <div className="vcp-modal-body">
+              <label className="vcp-modal-label">
+                Reason for deletion <span className="vcp-modal-required">*</span>
+              </label>
+              <textarea
+                className="vcp-modal-textarea"
+                placeholder="Explain why this complaint is being deleted (e.g. duplicate, false report, spam)..."
+                value={deleteReason}
+                onChange={(e) => setDeleteReason(e.target.value)}
+                rows={4}
+              />
+            </div>
+
+            <div className="vcp-modal-actions">
+              <button
+                className="vcp-modal-btn vcp-modal-btn--cancel"
+                onClick={() => { setDeletingComplaint(null); setDeleteReason(''); }}
+              >
+                Cancel
+              </button>
+              <button
+                className="vcp-modal-btn vcp-modal-btn--delete"
+                onClick={handleDelete}
+                disabled={deleting || !deleteReason.trim()}
+              >
+                {deleting ? (
+                  <><span className="vcp-spinner-small"></span> Deleting...</>
+                ) : (
+                  <><span className="material-symbols-outlined">delete</span> Confirm Delete</>
                 )}
               </button>
             </div>

@@ -15,7 +15,13 @@ const WardWorkerPage = () => {
   const [remarks, setRemarks] = useState('');
   const [uploading, setUploading] = useState(false);
 
-  // ── NEW: worker location state ──────────────────────────────────────────────
+  // ── NEW: report state ───────────────────────────────────────────────────────
+  const [reportingComplaint, setReportingComplaint] = useState(null);
+  const [reportMessage, setReportMessage] = useState('');
+  const [reporting, setReporting] = useState(false);
+  // ────────────────────────────────────────────────────────────────────────────
+
+  // ── worker location state ───────────────────────────────────────────────────
   const [workerLocation, setWorkerLocation] = useState({
     lat: null,
     lng: null,
@@ -35,7 +41,7 @@ const WardWorkerPage = () => {
     }
   }, [profile, filter]);
 
-  // ── NEW: geolocation effect ─────────────────────────────────────────────────
+  // ── geolocation effect ──────────────────────────────────────────────────────
   useEffect(() => {
     if (!navigator.geolocation) {
       setWorkerLocation({
@@ -185,6 +191,8 @@ const WardWorkerPage = () => {
         query = query.eq('status', 'resolving');
       } else if (filter === 'all') {
         query = query.neq('status', 'resolved');
+      } else if (filter === 'cancelling') {
+        query = query.eq('status', 'cancelling');
       }
 
       const { data, error } = await query;
@@ -233,7 +241,7 @@ const WardWorkerPage = () => {
     }
   };
 
-  // ── MODIFIED: store worker location in resolved_details ─────────────────────
+  // ── store worker location in resolved_details ───────────────────────────────
   const uploadProofAndResolve = async (complaint) => {
     if (!proofImage) {
       alert('Please select a proof image');
@@ -275,7 +283,7 @@ const WardWorkerPage = () => {
           complaint_id: complaint.id,
           resolved_image: publicUrl,
           resolver_email: user.email,
-          location: locationString,   // ← NEW: worker's location at time of resolution
+          location: locationString,
         });
 
       if (insertError) throw insertError;
@@ -307,13 +315,53 @@ const WardWorkerPage = () => {
   };
   // ────────────────────────────────────────────────────────────────────────────
 
+  // ── NEW: submit report function ─────────────────────────────────────────────
+  const submitReport = async (complaint) => {
+    if (!reportMessage.trim()) {
+      alert('Please provide a reason for reporting this complaint.');
+      return;
+    }
+    try {
+      setReporting(true);
+
+      const { error: updateError } = await supabase
+        .from('complaints')
+        .update({ status: 'cancelling' })
+        .eq('id', complaint.id);
+
+      if (updateError) throw updateError;
+
+      const { error: insertError } = await supabase
+        .from('cancel_details')
+        .insert({
+          complaint_id: complaint.id,
+          message: reportMessage.trim(),
+          ward_worker_email: user.email,
+        });
+
+      if (insertError) throw insertError;
+
+      setReportingComplaint(null);
+      setReportMessage('');
+      fetchComplaints();
+      alert('Report submitted. Waiting for admin review.');
+    } catch (error) {
+      console.error('Error submitting report:', error);
+      alert('Failed to submit report.');
+    } finally {
+      setReporting(false);
+    }
+  };
+  // ────────────────────────────────────────────────────────────────────────────
+
   const getStats = () => {
     const assigned = allComplaints.length;
     const pending = allComplaints.filter((c) => c.status === 'pending').length;
     const resolved = allComplaints.filter((c) => c.status === 'resolved').length;
     const resolving = allComplaints.filter((c) => c.status === 'resolving').length;
     const inprogress = allComplaints.filter((c) => c.status === 'in progress').length;
-    return { assigned, pending, resolved, resolving, inprogress };
+    const cancelling = allComplaints.filter((c) => c.status === 'cancelling').length;
+    return { assigned, pending, resolved, resolving, inprogress, cancelling };
   };
 
   const stats = getStats();
@@ -405,6 +453,7 @@ const WardWorkerPage = () => {
               <button className={filter === 'pending' ? 'active' : ''} onClick={() => setFilter('pending')}>Pending</button>
               <button className={filter === 'in progress' ? 'active' : ''} onClick={() => setFilter('in progress')}>In Progress</button>
               <button className={filter === 'resolving' ? 'active' : ''} onClick={() => setFilter('resolving')}>Resolving</button>
+              <button className={filter === 'cancelling' ? 'active' : ''} onClick={() => setFilter('cancelling')}>Reported</button>
             </div>
           </div>
 
@@ -420,7 +469,7 @@ const WardWorkerPage = () => {
               complaints.map((complaint) => (
                 <div
                   key={complaint.id}
-                  className={`complaint-card ${complaint.status === 'in progress' ? 'in-progress' : ''} ${complaint.status === 'resolving' ? 'resolving' : ''} ${uploadingComplaint === complaint.id ? 'upload-mode' : ''}`}
+                  className={`complaint-card ${complaint.status === 'in progress' ? 'in-progress' : ''} ${complaint.status === 'resolving' ? 'resolving' : ''} ${complaint.status === 'cancelling' ? 'cancelling' : ''} ${uploadingComplaint === complaint.id ? 'upload-mode' : ''}`}
                 >
                   {uploadingComplaint === complaint.id ? (
                     <>
@@ -447,7 +496,7 @@ const WardWorkerPage = () => {
                           <p className="complaint-id-mini">#{complaint.complaint_id} • {complaint.location}</p>
                         </div>
 
-                        {/* ── NEW: location status banner ── */}
+                        {/* location status banner */}
                         <div className={`location-status-banner ${workerLocation.loading ? 'locating' : workerLocation.error ? 'loc-error' : 'loc-ok'}`}>
                           <span className="material-symbols-outlined">
                             {workerLocation.loading
@@ -464,7 +513,6 @@ const WardWorkerPage = () => {
                               : `Location captured (±${Math.round(workerLocation.accuracy)}m)`}
                           </span>
                         </div>
-                        {/* ─────────────────────────────── */}
 
                         <div className="upload-section">
                           <label htmlFor={`file-${complaint.id}`} className="upload-area">
@@ -565,6 +613,47 @@ const WardWorkerPage = () => {
                         </>
                       )}
 
+                      {complaint.status === 'cancelling' && (
+                        <>
+                          <div className="progress-indicator cancelling">
+                            <div className="progress-bar">
+                              <div className="progress-fill cancelling-fill"></div>
+                            </div>
+                            <div className="progress-header cancelling-header">
+                              <div className="status-badge cancelling-badge">
+                                <span className="pulse cancelling-pulse"></span>
+                                <span>Pending Admin Review</span>
+                              </div>
+                              <span className="complaint-id">#{complaint.complaint_id}</span>
+                            </div>
+                          </div>
+
+                          <div className="card-content">
+                            <div className="thumbnail-row">
+                              <img src={complaint.image_url} alt="Thumbnail" className="thumbnail" />
+                              <div className="thumbnail-info">
+                                <h4>{complaint.description}</h4>
+                                {hasValidLocation(complaint.location) && (
+                                  <p className="location-text">{complaint.location}</p>
+                                )}
+                                <p className="location-text">{complaint.address}</p>
+                                <div className="timer-badge cancelling-timer-badge">
+                                  <span className="material-symbols-outlined">flag</span>
+                                  Report submitted
+                                </div>
+                              </div>
+                            </div>
+
+                            <div className="card-actions">
+                              <div className="cancelling-message">
+                                <span className="material-symbols-outlined">hourglass_top</span>
+                                <p>Report submitted. Waiting for admin to review and take action.</p>
+                              </div>
+                            </div>
+                          </div>
+                        </>
+                      )}
+
                       {complaint.status === 'in progress' && (
                         <>
                           <div className="progress-indicator">
@@ -607,6 +696,11 @@ const WardWorkerPage = () => {
                               <button className="action-btn resolve" onClick={() => setUploadingComplaint(complaint.id)}>
                                 <span className="material-symbols-outlined">check_circle</span>
                                 Mark as Resolved
+                              </button>
+                              {/* ── NEW: Report button ── */}
+                              <button className="action-btn rp-trigger-btn" onClick={() => setReportingComplaint(complaint)}>
+                                <span className="material-symbols-outlined">flag</span>
+                                Report
                               </button>
                             </div>
                           </div>
@@ -655,7 +749,13 @@ const WardWorkerPage = () => {
                                 <span className="material-symbols-outlined">play_arrow</span>
                                 Start Task
                               </button>
+                              {/* ── NEW: Report button ── */}
+                              
                             </div>
+                            <button className="action-btn rp-trigger-btn" onClick={() => setReportingComplaint(complaint)}>
+                                <span className="material-symbols-outlined">flag</span>
+                                Report
+                              </button>
                           </div>
                         </>
                       )}
@@ -667,6 +767,62 @@ const WardWorkerPage = () => {
           </div>
         </div>
       </main>
+
+      {/* ── NEW: Report Modal ─────────────────────────────────────────────────── */}
+      {reportingComplaint && (
+        <div
+          className="rp-overlay"
+          onClick={() => { setReportingComplaint(null); setReportMessage(''); }}
+        >
+          <div className="rp-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="rp-modal-header">
+              <div className="rp-modal-icon">
+                <span className="material-symbols-outlined">flag</span>
+              </div>
+              <h3>Report Complaint</h3>
+              <p>
+                Are you sure you want to report complaint{' '}
+                <strong>#{reportingComplaint.id}</strong> as invalid?
+                If approved by the admin, it will be deleted.
+              </p>
+            </div>
+
+            <div className="rp-modal-body">
+              <label className="rp-label">
+                Reason for reporting <span className="rp-required">*</span>
+              </label>
+              <textarea
+                className="rp-textarea"
+                placeholder="Explain why this complaint is invalid..."
+                value={reportMessage}
+                onChange={(e) => setReportMessage(e.target.value)}
+                rows={4}
+              />
+            </div>
+
+            <div className="rp-modal-actions">
+              <button
+                className="rp-btn rp-btn-cancel"
+                onClick={() => { setReportingComplaint(null); setReportMessage(''); }}
+              >
+                Cancel
+              </button>
+              <button
+                className="rp-btn rp-btn-submit"
+                onClick={() => submitReport(reportingComplaint)}
+                disabled={reporting || !reportMessage.trim()}
+              >
+                {reporting ? (
+                  <><span className="spinner-small"></span> Submitting...</>
+                ) : (
+                  <><span className="material-symbols-outlined">send</span> Submit Report</>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* ──────────────────────────────────────────────────────────────────────── */}
     </div>
   );
 };

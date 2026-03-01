@@ -18,6 +18,7 @@ import RequestsPage from "./pages/admin/RequestsPage";
 import UserNotificationPage from "./pages/user/UserNotificationPage";
 import WardWorkerNotificationPage from "./pages/wardworker/WardWorkerNotificationPage";
 import Userstable from "./pages/admin/Userstable";
+import VerifyCancellationPage from "./pages/admin/VerifyCancellationPage";
 function App() {
   return (
     <Router>
@@ -36,6 +37,7 @@ function App() {
         <Route path="/wardworker/dashboard" element={<WardWorkerPage />} />
         <Route path="*" element={<ErrorPage />} />
         <Route path="/admin/verify-resolution" element={<VerifyResolutionPage />} />
+        <Route path="/admin/verify-cancellation" element={<VerifyCancellationPage />} />
         <Route path="/admin/complaints" element={<ComplaintsPage />} />
         <Route path="/admin/feedback" element={<RequestsPage />} />
         <Route path="/admin/users" element={<Userstable/>}/>

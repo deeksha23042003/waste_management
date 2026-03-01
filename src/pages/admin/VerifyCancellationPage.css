@@ -683,6 +683,29 @@
   cursor: not-allowed;
 }
 
+.vcp-modal-btn--delete {
+  background: #dc2626;
+  color: #ffffff;
+  box-shadow: 0 4px 6px rgba(220, 38, 38, 0.25);
+}
+
+.vcp-modal-btn--delete:hover:not(:disabled) {
+  background: #b91c1c;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 10px rgba(220, 38, 38, 0.3);
+}
+
+.vcp-modal-btn--delete:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.vcp-modal-icon--delete {
+  background: #fff1f2;
+  color: #dc2626;
+  border-color: #fecdd3;
+}
+
 .vcp-spinner-small {
   width: 14px;
   height: 14px;
