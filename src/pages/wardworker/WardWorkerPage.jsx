@@ -15,6 +15,16 @@ const WardWorkerPage = () => {
   const [remarks, setRemarks] = useState('');
   const [uploading, setUploading] = useState(false);
 
+  // ── NEW: worker location state ──────────────────────────────────────────────
+  const [workerLocation, setWorkerLocation] = useState({
+    lat: null,
+    lng: null,
+    accuracy: null,
+    loading: true,
+    error: null,
+  });
+  // ────────────────────────────────────────────────────────────────────────────
+
   useEffect(() => {
     checkUser();
   }, []);
@@ -25,53 +35,88 @@ const WardWorkerPage = () => {
     }
   }, [profile, filter]);
 
+  // ── NEW: geolocation effect ─────────────────────────────────────────────────
+  useEffect(() => {
+    if (!navigator.geolocation) {
+      setWorkerLocation({
+        lat: null,
+        lng: null,
+        accuracy: null,
+        loading: false,
+        error: 'Geolocation not supported by this device/browser.',
+      });
+      return;
+    }
+
+    const success = (pos) => {
+      setWorkerLocation({
+        lat: pos.coords.latitude,
+        lng: pos.coords.longitude,
+        accuracy: pos.coords.accuracy,
+        loading: false,
+        error: null,
+      });
+    };
+
+    const failure = (err) => {
+      console.error('Location error:', err);
+      setWorkerLocation({
+        lat: null,
+        lng: null,
+        accuracy: null,
+        loading: false,
+        error:
+          err.code === 2
+            ? 'Unable to detect location. Please turn on Wi-Fi or mobile data.'
+            : err.message,
+      });
+    };
+
+    // Try HIGH accuracy first, fall back to LOW accuracy
+    navigator.geolocation.getCurrentPosition(
+      success,
+      () => {
+        navigator.geolocation.getCurrentPosition(success, failure, {
+          enableHighAccuracy: false,
+          timeout: 20000,
+        });
+      },
+      { enableHighAccuracy: true, timeout: 10000 }
+    );
+  }, []);
+  // ────────────────────────────────────────────────────────────────────────────
+
   // Check if location has valid lat & lng
   const hasValidLocation = (location) => {
-    if (!location || typeof location !== "string") return false;
-
-    const parts = location.trim().split(",");
-
+    if (!location || typeof location !== 'string') return false;
+    const parts = location.trim().split(',');
     if (parts.length !== 2) return false;
-
     const lat = parseFloat(parts[0].trim());
     const lng = parseFloat(parts[1].trim());
-
-    return (
-      !isNaN(lat) &&
-      !isNaN(lng) &&
-      lat !== 0 &&
-      lng !== 0
-    );
+    return !isNaN(lat) && !isNaN(lng) && lat !== 0 && lng !== 0;
   };
 
   // Open Google Maps
   const openInGoogleMaps = (location) => {
-    const [lat, lng] = location.split(",").map(v => v.trim());
-    window.open(
-      `https://www.google.com/maps?q=${lat},${lng}`,
-      "_blank"
-    );
+    const [lat, lng] = location.split(',').map((v) => v.trim());
+    window.open(`https://www.google.com/maps?q=${lat},${lng}`, '_blank');
   };
 
   // Add notification function - delete existing then insert new
   const addNotification = async (email, complaintId, message) => {
     try {
-      // First delete existing notification for this email and complaint_id
       await supabase
         .from('notifications')
         .delete()
         .eq('email', email)
         .eq('complaint_id', complaintId);
 
-      // Then insert new notification
-      const { error } = await supabase
-        .from('notifications')
-        .insert({
-          email: email,
-          complaint_id: complaintId,
-          message: message,
-          readstatus: 'unread'
-        });
+      const { error } = await supabase.from('notifications').insert({
+        email: email,
+        complaint_id: complaintId,
+        message: message,
+        readstatus: 'unread',
+      });
 
       if (error) {
         console.error('Error adding notification:', error);
@@ -83,8 +128,10 @@ const WardWorkerPage = () => {
 
   const checkUser = async () => {
     try {
-      const { data: { session } } = await supabase.auth.getSession();
-      
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+
       if (!session) {
         window.location.href = '/login';
         return;
@@ -117,22 +164,16 @@ const WardWorkerPage = () => {
     try {
       setLoading(true);
 
-      // Fetch ALL complaints for stats
       const { data: allData } = await supabase
         .from('complaints')
-        .select(`*,profiles:email (
-          phone_no
-        )`)
+        .select(`*,profiles:email (phone_no)`)
         .eq('ward_number', profile.ward_number);
-      
+
       setAllComplaints(allData || []);
 
       let query = supabase
         .from('complaints')
-        .select(`*,
-          profiles:email (
-            phone_no
-          )`)
+        .select(`*, profiles:email (phone_no)`)
         .eq('ward_number', profile.ward_number)
         .order('created_at', { ascending: false });
 
@@ -143,12 +184,10 @@ const WardWorkerPage = () => {
       } else if (filter === 'resolving') {
         query = query.eq('status', 'resolving');
       } else if (filter === 'all') {
-        // Show all except resolved
         query = query.neq('status', 'resolved');
       }
 
       const { data, error } = await query;
-
       if (error) throw error;
       setComplaints(data || []);
     } catch (error) {
@@ -160,8 +199,7 @@ const WardWorkerPage = () => {
 
   const startTask = async (complaintId) => {
     try {
-      // Get complaint details first
-      const complaint = complaints.find(c => c.id === complaintId);
+      const complaint = complaints.find((c) => c.id === complaintId);
       if (!complaint) {
         alert('Complaint not found');
         return;
@@ -174,7 +212,6 @@ const WardWorkerPage = () => {
 
       if (error) throw error;
 
-      // Add notification for the citizen
       await addNotification(
         complaint.email,
         complaint.id,
@@ -196,9 +233,19 @@ const WardWorkerPage = () => {
     }
   };
 
+  // ── MODIFIED: store worker location in resolved_details ─────────────────────
   const uploadProofAndResolve = async (complaint) => {
     if (!proofImage) {
       alert('Please select a proof image');
+      return;
+    }
+
+    // Guard: location must be available
+    if (!workerLocation.lat || !workerLocation.lng) {
+      alert(
+        workerLocation.error ||
+          'Your location is not available yet. Please enable location access and try again.'
+      );
       return;
     }
 
@@ -215,16 +262,20 @@ const WardWorkerPage = () => {
 
       if (uploadError) throw uploadError;
 
-      const { data: { publicUrl } } = supabase.storage
-        .from('WasteLocationBucket')
-        .getPublicUrl(filePath);
+      const {
+        data: { publicUrl },
+      } = supabase.storage.from('WasteLocationBucket').getPublicUrl(filePath);
+
+      // Build location string "lat,lng" to store in the location column
+      const locationString = `${workerLocation.lat},${workerLocation.lng}`;
 
       const { error: insertError } = await supabase
         .from('resolved_details')
         .insert({
           complaint_id: complaint.id,
           resolved_image: publicUrl,
-          resolver_email: user.email
+          resolver_email: user.email,
+          location: locationString,   // ← NEW: worker's location at time of resolution
         });
 
       if (insertError) throw insertError;
@@ -236,7 +287,6 @@ const WardWorkerPage = () => {
 
       if (updateError) throw updateError;
 
-      // Add notification for the citizen
       await addNotification(
         complaint.email,
         complaint.id,
@@ -255,13 +305,14 @@ const WardWorkerPage = () => {
       setUploading(false);
     }
   };
+  // ────────────────────────────────────────────────────────────────────────────
 
   const getStats = () => {
     const assigned = allComplaints.length;
-    const pending = allComplaints.filter(c => c.status === 'pending').length;
-    const resolved = allComplaints.filter(c => c.status === 'resolved').length;
-    const resolving = allComplaints.filter(c => c.status === 'resolving').length;
-    const inprogress = allComplaints.filter(c => c.status === 'in progress').length;
+    const pending = allComplaints.filter((c) => c.status === 'pending').length;
+    const resolved = allComplaints.filter((c) => c.status === 'resolved').length;
+    const resolving = allComplaints.filter((c) => c.status === 'resolving').length;
+    const inprogress = allComplaints.filter((c) => c.status === 'in progress').length;
     return { assigned, pending, resolved, resolving, inprogress };
   };
 
@@ -329,9 +380,9 @@ const WardWorkerPage = () => {
             <div className="stat-card">
               <div>
                 <p className="stat-label">Resolving</p>
-                <p className="stat-value" style={{color: '#f59e0b'}}>{stats.resolving}</p>
+                <p className="stat-value" style={{ color: '#f59e0b' }}>{stats.resolving}</p>
               </div>
-              <div className="stat-icon" style={{background: '#fef3c7', color: '#f59e0b'}}>
+              <div className="stat-icon" style={{ background: '#fef3c7', color: '#f59e0b' }}>
                 <span className="material-symbols-outlined">pending_actions</span>
               </div>
             </div>
@@ -344,36 +395,16 @@ const WardWorkerPage = () => {
               <div className="stat-icon green">
                 <span className="material-symbols-outlined">check_circle</span>
               </div>
-            </div>   
+            </div>
           </div>
 
           <div className="complaints-header">
             <h3>Active Complaints</h3>
             <div className="filter-buttons">
-              <button 
-                className={filter === 'all' ? 'active' : ''}
-                onClick={() => setFilter('all')}
-              >
-                All
-              </button>
-              <button 
-                className={filter === 'pending' ? 'active' : ''}
-                onClick={() => setFilter('pending')}
-              >
-                Pending
-              </button>
-              <button 
-                className={filter === 'in progress' ? 'active' : ''}
-                onClick={() => setFilter('in progress')}
-              >
-                In Progress
-              </button>
-              <button 
-                className={filter === 'resolving' ? 'active' : ''}
-                onClick={() => setFilter('resolving')}
-              >
-                Resolving
-              </button>
+              <button className={filter === 'all' ? 'active' : ''} onClick={() => setFilter('all')}>All</button>
+              <button className={filter === 'pending' ? 'active' : ''} onClick={() => setFilter('pending')}>Pending</button>
+              <button className={filter === 'in progress' ? 'active' : ''} onClick={() => setFilter('in progress')}>In Progress</button>
+              <button className={filter === 'resolving' ? 'active' : ''} onClick={() => setFilter('resolving')}>Resolving</button>
             </div>
           </div>
 
@@ -386,16 +417,10 @@ const WardWorkerPage = () => {
                 <p>No complaints found</p>
               </div>
             ) : (
-              complaints.map(complaint => (
-                <div 
-                  key={complaint.id} 
-                  className={`complaint-card ${
-                    complaint.status === 'in progress' ? 'in-progress' : ''
-                  } ${
-                    complaint.status === 'resolving' ? 'resolving' : ''
-                  } ${
-                    uploadingComplaint === complaint.id ? 'upload-mode' : ''
-                  }`}
+              complaints.map((complaint) => (
+                <div
+                  key={complaint.id}
+                  className={`complaint-card ${complaint.status === 'in progress' ? 'in-progress' : ''} ${complaint.status === 'resolving' ? 'resolving' : ''} ${uploadingComplaint === complaint.id ? 'upload-mode' : ''}`}
                 >
                   {uploadingComplaint === complaint.id ? (
                     <>
@@ -404,7 +429,7 @@ const WardWorkerPage = () => {
                           <span className="material-symbols-outlined">camera_alt</span>
                           Upload Proof
                         </h4>
-                        <button 
+                        <button
                           className="close-btn"
                           onClick={() => {
                             setUploadingComplaint(null);
@@ -422,15 +447,31 @@ const WardWorkerPage = () => {
                           <p className="complaint-id-mini">#{complaint.complaint_id} • {complaint.location}</p>
                         </div>
 
+                        {/* ── NEW: location status banner ── */}
+                        <div className={`location-status-banner ${workerLocation.loading ? 'locating' : workerLocation.error ? 'loc-error' : 'loc-ok'}`}>
+                          <span className="material-symbols-outlined">
+                            {workerLocation.loading
+                              ? 'my_location'
+                              : workerLocation.error
+                              ? 'location_off'
+                              : 'location_on'}
+                          </span>
+                          <span>
+                            {workerLocation.loading
+                              ? 'Detecting your location…'
+                              : workerLocation.error
+                              ? `Location required: ${workerLocation.error}`
+                              : `Location captured (±${Math.round(workerLocation.accuracy)}m)`}
+                          </span>
+                        </div>
+                        {/* ─────────────────────────────── */}
+
                         <div className="upload-section">
                           <label htmlFor={`file-${complaint.id}`} className="upload-area">
                             <div className="upload-box">
                               {proofImage ? (
                                 <div className="image-preview">
-                                  <img 
-                                    src={URL.createObjectURL(proofImage)} 
-                                    alt="Preview" 
-                                  />
+                                  <img src={URL.createObjectURL(proofImage)} alt="Preview" />
                                   <p className="image-name">{proofImage.name}</p>
                                 </div>
                               ) : (
@@ -465,7 +506,7 @@ const WardWorkerPage = () => {
                         <button
                           className="submit-btn"
                           onClick={() => uploadProofAndResolve(complaint)}
-                          disabled={uploading || !proofImage}
+                          disabled={uploading || !proofImage || workerLocation.loading || !!workerLocation.error}
                         >
                           {uploading ? (
                             <>
@@ -503,9 +544,10 @@ const WardWorkerPage = () => {
                               <img src={complaint.image_url} alt="Thumbnail" className="thumbnail" />
                               <div className="thumbnail-info">
                                 <h4>{complaint.description}</h4>
-                                {hasValidLocation(complaint.location) &&
-                                <p className="location-text">{complaint.location}</p>}
-                                <p className='location-text'>{complaint.address}</p>
+                                {hasValidLocation(complaint.location) && (
+                                  <p className="location-text">{complaint.location}</p>
+                                )}
+                                <p className="location-text">{complaint.address}</p>
                                 <div className="timer-badge resolving-badge">
                                   <span className="material-symbols-outlined">schedule</span>
                                   Awaiting approval
@@ -546,10 +588,7 @@ const WardWorkerPage = () => {
                                 <p className="location-text">{complaint.location}</p>
                                 <div className="timer-badge">
                                   {complaint.profiles?.phone_no && (
-                                    <a
-                                      href={`tel:${complaint.profiles.phone_no}`}
-                                      className="call-btn"
-                                    >
+                                    <a href={`tel:${complaint.profiles.phone_no}`} className="call-btn">
                                       <span className="material-symbols-outlined">call</span>
                                       Call Citizen
                                     </a>
@@ -558,20 +597,14 @@ const WardWorkerPage = () => {
                               </div>
                             </div>
 
-                            <div className="card-actions" style={{display:"flex"}}>
+                            <div className="card-actions" style={{ display: 'flex' }}>
                               {hasValidLocation(complaint.location) && (
-                                <button
-                                  className="action-btn map"
-                                  onClick={() => openInGoogleMaps(complaint.location)}
-                                >
+                                <button className="action-btn map" onClick={() => openInGoogleMaps(complaint.location)}>
                                   <span className="material-symbols-outlined">map</span>
                                   View on Map
                                 </button>
                               )}
-                              <button 
-                                className="action-btn resolve"
-                                onClick={() => setUploadingComplaint(complaint.id)}
-                              >
+                              <button className="action-btn resolve" onClick={() => setUploadingComplaint(complaint.id)}>
                                 <span className="material-symbols-outlined">check_circle</span>
                                 Mark as Resolved
                               </button>
@@ -590,42 +623,35 @@ const WardWorkerPage = () => {
                               <span className="status-badge pending">Pending</span>
                             </div>
                           </div>
-                     
+
                           <div className="card-content">
-                            <h4>{complaint.description}<div className='timer-badge'>
-                              {complaint.profiles?.phone_no && (
-                                <a
-                                  href={`tel:${complaint.profiles.phone_no}`}
-                                  className="call-btn"
-                                >
-                                  <span className="material-symbols-outlined">call</span>
-                                  Call Citizen
-                                </a>
-                              )}
-                            </div></h4>
+                            <h4>
+                              {complaint.description}
+                              <div className="timer-badge">
+                                {complaint.profiles?.phone_no && (
+                                  <a href={`tel:${complaint.profiles.phone_no}`} className="call-btn">
+                                    <span className="material-symbols-outlined">call</span>
+                                    Call Citizen
+                                  </a>
+                                )}
+                              </div>
+                            </h4>
                             {hasValidLocation(complaint.location) && (
                               <div className="location">
                                 <span className="material-symbols-outlined">location_on</span>
                                 <span>{complaint.location}</span>
                               </div>
                             )}
-                                 
                             <p className="address">{complaint.address}</p>
 
-                            <div className="card-actions" style={{display:"flex"}}>
+                            <div className="card-actions" style={{ display: 'flex' }}>
                               {hasValidLocation(complaint.location) && (
-                                <button
-                                  className="action-btn map"
-                                  onClick={() => openInGoogleMaps(complaint.location)}
-                                >
+                                <button className="action-btn map" onClick={() => openInGoogleMaps(complaint.location)}>
                                   <span className="material-symbols-outlined">map</span>
                                   View on Map
                                 </button>
                               )}
-                              <button 
-                                className="action-btn start"
-                                onClick={() => startTask(complaint.id)}
-                              >
+                              <button className="action-btn start" onClick={() => startTask(complaint.id)}>
                                 <span className="material-symbols-outlined">play_arrow</span>
                                 Start Task
                               </button>
