@@ -69,6 +69,10 @@ const AdminHeader = () => {
                         <span className="material-symbols-outlined">fact_check</span>
                         Verify Resolution
                     </a>
+                     <a href="/admin/verify-cancellation" className="vrp-nav-link">
+                        <span className="material-symbols-outlined">cancel</span>
+                        Verify Cancellation
+                    </a>
                     <a href="/admin/users" className="vrp-nav-link">
                         <span className="material-symbols-outlined">person</span>
                         Users
@@ -80,7 +84,7 @@ const AdminHeader = () => {
                 </nav>
             </div>
             <div className="vrp-header-right">
-                <span className="vrp-badge">Admin Verification Mode</span>
+                
                 <div className="vrp-divider"></div>
                 <div className="vrp-avatar-wrapper">
                     <div
