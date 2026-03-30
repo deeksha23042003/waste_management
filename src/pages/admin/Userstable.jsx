@@ -231,6 +231,24 @@ export default function UsersTable() {
     return pages;
   }
 
+  const handleVerify = async (workerId) => {
+  try {
+    const { error } = await supabase
+      .from("profiles")
+      .update({ is_verified_worker: true })
+      .eq("id", workerId);
+
+    if (error) throw error;
+
+    alert("Worker verified successfully ✅");
+
+    // Refresh data
+    fetchData();
+  } catch (err) {
+    alert(err.message);
+  }
+};
+
   /* ── Render ── */
   return (
     <>
@@ -330,7 +348,7 @@ export default function UsersTable() {
                 {tab === "citizen" ? (
                   <CitizensTable rows={paged} citizenMap={citizenMap} />
                 ) : (
-                  <WorkersTable rows={paged} wardMap={wardMap} />
+                  <WorkersTable rows={paged} wardMap={wardMap} onVerify={handleVerify} />
                 )}
               </div>
             )}
@@ -447,7 +465,7 @@ function CitizensTable({ rows, citizenMap }) {
 }
 
 /* ─── Workers Table ───────────────────────────────── */
-function WorkersTable({ rows, wardMap }) {
+function WorkersTable({ rows, wardMap, onVerify }) {
   return (
     <table className="data-table">
       <thead>
@@ -460,6 +478,7 @@ function WorkersTable({ rows, wardMap }) {
           <th className="center col-yellow">In Progress</th>
           <th className="center col-blue">Resolving</th>
           <th className="center col-green">Resolved</th>
+          <th className="center">Verify</th>
         </tr>
       </thead>
       <tbody>
@@ -503,6 +522,20 @@ function WorkersTable({ rows, wardMap }) {
               <td className="center">
                 <CountCell value={cnt.resolved} type="resolved" />
               </td>
+              <td className="center">
+  {worker.is_verified_worker ?
+   (
+    <span className="verified-badge">Verified</span>
+  ) : 
+  (
+    <button
+      className="verify-btn"
+      onClick={() => onVerify(worker.id)}
+    >
+      Verify
+    </button>
+  )}
+</td>
             </tr>
           );
         })}

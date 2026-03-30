@@ -165,8 +165,14 @@ const { data: profile, error: profileError } = await supabase
         localStorage.setItem('loggedInRole', profile[0].user_type);//citizen,ward or admin
         //based on role we can navigate to respective dashboard later
         if(profile[0].user_type==='worker'){
-       navigate('/wardworker/dashboard');
-          return;
+       if (profile[0].is_verified_worker) {
+    //  Verified worker
+    navigate('/wardworker/dashboard');
+  } else {
+    //  Not verified
+    alert("Your account is not verified yet. Please wait for admin approval.");
+    return;
+  }
         }
         else if (profile[0].user_type==='admin'){
           navigate('/admin/verify-resolution');
@@ -193,20 +199,7 @@ const { data: profile, error: profileError } = await supabase
     }
   };
 
-  const handleGoogleSignIn = async () => {
-    try {
-      const { data, error } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
-        options: {
-          redirectTo: window.location.origin
-        }
-      });
 
-      if (error) throw error;
-    } catch (error) {
-      alert(error.message);
-    }
-  };
 
   return (
     <div className="login-container">
