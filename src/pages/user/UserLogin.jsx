@@ -167,7 +167,13 @@ const { data: profile, error: profileError } = await supabase
         if(profile[0].user_type==='worker'){
        if (profile[0].is_verified_worker) {
     //  Verified worker
+    if(!profile[0].is_blocked){
     navigate('/wardworker/dashboard');
+    }
+    else{
+      alert("Your ward worker account is blocked.");
+      return;
+    }
   } else {
     //  Not verified
     alert("Your account is not verified yet. Please wait for admin approval.");
@@ -180,7 +186,13 @@ const { data: profile, error: profileError } = await supabase
         }
         else if(profile[0].user_type==='citizen'){
           
+          if(!profile[0].is_blocked){
           navigate('/user/dashboard');
+          }
+          else{
+            alert("Your account is blocked.");
+            return;
+          }
         }
          
       } else {

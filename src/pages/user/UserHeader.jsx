@@ -12,17 +12,46 @@ const UserHeader = ({ active = "home" }) => {
   // Fetch unread notifications count
   useEffect(() => {
     fetchUnreadCount();
-    
+   checkIfBlocked();
     // Poll for updates every 30 seconds
     const interval = setInterval(() => {
       fetchUnreadCount();
+       checkIfBlocked();
     }, 30000); // 30 seconds
 
     return () => {
       clearInterval(interval);
     };
   }, []);
+const checkIfBlocked = async () => {
+  try {
+    const { data: { session } } = await supabase.auth.getSession();
 
+    if (!session?.user?.email) return;
+
+    const { data, error } = await supabase
+      .from("profiles")
+      .select("is_blocked")
+      .eq("email", session.user.email)
+      .single();
+
+    if (error) {
+      console.error("Error checking block status:", error);
+      return;
+    }
+
+    if (data?.is_blocked) {
+      alert("Your account has been blocked by admin 🚫");
+
+      await supabase.auth.signOut();
+      localStorage.clear();
+      navigate("/user/login");
+      return;
+    }
+  } catch (err) {
+    console.error("Block check error:", err);
+  }
+};
   const fetchUnreadCount = async () => {
     try {
       // Get current user session

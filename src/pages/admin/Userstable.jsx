@@ -249,8 +249,26 @@ export default function UsersTable() {
   }
 };
 
+
+const handleBlockToggle = async (userId, currentStatus) => {
+  try {
+    const { error } = await supabase
+      .from("profiles")
+      .update({ is_blocked: !currentStatus })
+      .eq("id", userId);
+
+    if (error) throw error;
+
+    alert(!currentStatus ? "User blocked 🚫" : "User unblocked ✅");
+
+    fetchData(); // refresh
+  } catch (err) {
+    alert(err.message);
+  }
+};
   /* ── Render ── */
   return (
+    
     <>
       <AdminHeader />
 
@@ -346,9 +364,9 @@ export default function UsersTable() {
             ) : (
               <div className="table-scroll">
                 {tab === "citizen" ? (
-                  <CitizensTable rows={paged} citizenMap={citizenMap} />
+                  <CitizensTable rows={paged} citizenMap={citizenMap} onBlockToggle={handleBlockToggle} />
                 ) : (
-                  <WorkersTable rows={paged} wardMap={wardMap} onVerify={handleVerify} />
+                  <WorkersTable rows={paged} wardMap={wardMap} onVerify={handleVerify} onBlockToggle={handleBlockToggle}/>
                 )}
               </div>
             )}
@@ -401,7 +419,7 @@ export default function UsersTable() {
 }
 
 /* ─── Citizens Table ──────────────────────────────── */
-function CitizensTable({ rows, citizenMap }) {
+function CitizensTable({ rows, citizenMap,onBlockToggle }) {
   return (
     <table className="data-table">
       <thead>
@@ -414,6 +432,7 @@ function CitizensTable({ rows, citizenMap }) {
           <th className="center col-yellow">In Progress</th>
           <th className="center col-blue">Resolving</th>
           <th className="center col-green">Resolved</th>
+          <th className="center">Block</th>
         </tr>
       </thead>
       <tbody>
@@ -456,6 +475,23 @@ function CitizensTable({ rows, citizenMap }) {
               <td className="center">
                 <CountCell value={cnt.resolved} type="resolved" />
               </td>
+              <td className="center">
+  {citizen.is_blocked ? (
+    <button
+      className="unblock-btn"
+      onClick={() => onBlockToggle(citizen.id, citizen.is_blocked)}
+    >
+      Unblock
+    </button>
+  ) : (
+    <button
+      className="block-btn"
+      onClick={() => onBlockToggle(citizen.id, citizen.is_blocked)}
+    >
+      Block
+    </button>
+  )}
+</td>
             </tr>
           );
         })}
@@ -465,7 +501,7 @@ function CitizensTable({ rows, citizenMap }) {
 }
 
 /* ─── Workers Table ───────────────────────────────── */
-function WorkersTable({ rows, wardMap, onVerify }) {
+function WorkersTable({ rows, wardMap, onVerify, onBlockToggle }) {
   return (
     <table className="data-table">
       <thead>
@@ -479,6 +515,7 @@ function WorkersTable({ rows, wardMap, onVerify }) {
           <th className="center col-blue">Resolving</th>
           <th className="center col-green">Resolved</th>
           <th className="center">Verify</th>
+          <th className="center">Block</th>
         </tr>
       </thead>
       <tbody>
@@ -533,6 +570,23 @@ function WorkersTable({ rows, wardMap, onVerify }) {
       onClick={() => onVerify(worker.id)}
     >
       Verify
+    </button>
+  )}
+</td>
+<td className="center">
+  {worker.is_blocked ? (
+    <button
+      className="unblock-btn"
+      onClick={() => onBlockToggle(worker.id, worker.is_blocked)}
+    >
+      Unblock
+    </button>
+  ) : (
+    <button
+      className="block-btn"
+      onClick={() => onBlockToggle(worker.id, worker.is_blocked)}
+    >
+      Block
     </button>
   )}
 </td>

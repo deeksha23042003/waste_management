@@ -118,7 +118,7 @@ const WardWorkerHeader = () => {
       // Fetch profile details using user.id
       const { data, error } = await supabase
         .from("profiles")
-        .select("full_name, ward_number, avatar_url")
+        .select("full_name, ward_number, avatar_url,is_blocked")
         .eq("id", user.id)
         .single();
 
@@ -126,7 +126,14 @@ const WardWorkerHeader = () => {
         console.error("Error fetching profile:", error);
         return;
       }
+if (data?.is_blocked) {
+  alert("Your account has been blocked by admin 🚫");
 
+  await supabase.auth.signOut();
+  localStorage.clear();
+  window.location.href = "/user/login";
+  return;
+}
       // Set state
       setName(data.full_name);
       setWardNumber(data.ward_number);
@@ -146,6 +153,14 @@ const WardWorkerHeader = () => {
   useEffect(() => {
     fetchProfile();
   }, []);
+
+  useEffect(() => {
+  const interval = setInterval(() => {
+    fetchProfile(); // re-check block every 30 sec
+  }, 30000);
+
+  return () => clearInterval(interval); // stop when component unmounts
+}, []);
 
   // Add effect to log unreadCount changes
   useEffect(() => {
